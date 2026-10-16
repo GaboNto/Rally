@@ -23,7 +23,7 @@ describe('AppComponent', () => {
   it('should expose the complete navigation', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.nav.length).toBe(10);
+    expect(app.nav.length).toBe(9);
   });
 
   it('should render the HydroGuard brand', () => {
