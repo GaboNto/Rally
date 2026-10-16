@@ -2,8 +2,11 @@ import { Injectable, computed, signal } from '@angular/core';
 import { DEMO_ALERTS, DEMO_INTERVENTIONS, DEMO_REPORTS, DEMO_RESERVOIRS, DEMO_SCENARIOS, DEMO_SEGMENTS, DEMO_SENSORS, DEMO_ZONES } from './demo-data';
 import { AlertStatus, CommunityReport, SimulationMode } from './models';
 
+export type DemoArea = 'arica' | 'quibdo';
+
 @Injectable({ providedIn: 'root' })
 export class HydroService {
+  readonly demoArea = signal<DemoArea>('arica');
   readonly sensors = signal(structuredClone(DEMO_SENSORS));
   readonly segments = signal(structuredClone(DEMO_SEGMENTS));
   readonly zones = signal(structuredClone(DEMO_ZONES));
@@ -35,6 +38,7 @@ export class HydroService {
   });
 
   selectSensor(id: string) { this.selectedSensorId.set(id); }
+  setDemoArea(area: DemoArea) { this.demoArea.set(area); }
 
   setSimulation(mode: SimulationMode, running: boolean) {
     this.simulationMode.set(mode);
