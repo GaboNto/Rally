@@ -1,5 +1,43 @@
-import { Component } from '@angular/core';import { DatePipe } from '@angular/common';import { HydroService } from '../core/hydro.service';
-@Component({selector:'app-reports',standalone:true,imports:[DatePipe],template:`
-<section class="page-head"><div><div class="eyebrow">Documentación operacional</div><h1>Informes y exportación</h1><p>Consolida telemetría, incidencias, diagnósticos y alternativas.</p></div><span class="badge blue">Centro de descargas</span></section><section class="report-grid">@for(item of reportTypes;track item.id){<article class="card report"><div class="report-icon">{{item.icon}}</div><div><h3>{{item.title}}</h3><p>{{item.description}}</p><small>Actualizado {{hydro.lastUpdated()|date:'dd MMM, HH:mm'}}</small></div><div class="buttons"><button class="btn" (click)="downloadCsv(item.id)">↓ CSV</button><button class="btn primary" (click)="printReport()">▤ PDF</button></div></article>}</section><article class="card preview"><div class="report-header"><div><span>HydroGuard</span><h2>Resumen ejecutivo de demostración</h2></div><small>Generado {{hydro.lastUpdated()|date:'dd/MM/yyyy HH:mm'}}</small></div><div class="summary"><div><small>SENSORES</small><b>12</b></div><div><small>ACTIVOS</small><b>{{hydro.metrics().active}}</b></div><div><small>ALERTAS</small><b>{{hydro.activeAlerts().length}}</b></div><div><small>TRAMOS CRÍTICOS</small><b>2</b></div><div><small>PROPUESTAS</small><b>3</b></div></div><h3>Hallazgos destacados</h3><ul><li><b>TR-02 · Posible obstrucción:</b> evidencia 86%; requiere inspección física.</li><li><b>TR-03 · Posible sobrecarga:</b> niveles coordinados sobre capacidad.</li><li><b>Alternativa IV-01:</b> jardín de lluvia con puntaje multicriterio 87/100.</li></ul><div class="disclaimer">Documento generado con datos ficticios. No constituye un estudio hidráulico, diagnóstico oficial ni recomendación de ingeniería.</div></article>
-`,styles:[`.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.report{display:grid;grid-template-columns:48px 1fr auto;gap:14px;align-items:center;padding:16px}.report-icon{width:45px;height:45px;border-radius:11px;background:#12323d;color:#5ddbd3;display:grid;place-content:center;font-size:20px}.report h3{font-size:12px;margin:0 0 4px}.report p{font-size:9px;color:#708a95;margin:0}.report small{font-size:8px;color:#506b76}.buttons{display:flex;gap:6px}.preview{margin-top:16px;padding:28px;max-width:920px}.report-header{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:16px}.report-header span{color:var(--cyan);font-weight:800}.report-header h2{font-size:17px;margin:5px 0}.report-header small{color:#708a95}.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:20px 0}.summary div{padding:12px;background:#0e2631;border-radius:8px}.summary small,.summary b{display:block}.summary small{font-size:8px;color:#6c8590}.summary b{font:700 21px 'Manrope';margin-top:5px}.preview h3{font-size:12px}.preview li{font-size:10px;color:#8ea3ac;margin:8px 0}.disclaimer{font-size:9px;color:#d1ad64;background:#2d271b;padding:10px;border-radius:7px;margin-top:18px}@media(max-width:800px){.report-grid{grid-template-columns:1fr}.report{grid-template-columns:42px 1fr}.buttons{grid-column:2}.summary{grid-template-columns:repeat(2,1fr)}}@media print{.page-head,.report-grid{display:none}.preview{border:0;color:#111;background:white}.summary div{background:#eee}.disclaimer{background:#eee}}`]})
-export class ReportsComponent{reportTypes=[{id:'sensors',icon:'◉',title:'Estado de sensores',description:'Inventario, conectividad y última telemetría.'},{id:'alerts',icon:'!',title:'Alertas e incidencias',description:'Eventos, estados, responsables y acciones.'},{id:'segments',icon:'◇',title:'Diagnóstico de tramos',description:'Evidencia, confianza y acciones sugeridas.'},{id:'green',icon:'♧',title:'Alternativas verdes',description:'Puntajes, costos y beneficios estimados.'},{id:'scenarios',icon:'↗',title:'Comparación de escenarios',description:'Indicadores hidráulicos demostrativos.'},{id:'community',icon:'◎',title:'Reportes comunitarios',description:'Trazabilidad desde recepción a resolución.'}];constructor(public hydro:HydroService){}printReport(){window.print()}downloadCsv(type:string){let rows:string[][]=[['HydroGuard','Datos de demostración']];if(type==='sensors')rows=[['ID','Nombre','Estado','Nivel cm'],...this.hydro.sensors().map(s=>[s.id,s.name,s.status,String(s.level)])];else if(type==='alerts')rows=[['ID','Tipo','Severidad','Estado'],...this.hydro.alerts().map(a=>[a.id,a.type,a.severity,a.status])];else if(type==='segments')rows=[['ID','Tramo','Diagnóstico','Evidencia'],...this.hydro.segments().map(s=>[s.id,s.name,s.condition,String(s.confidence)])];else if(type==='green')rows=[['ID','Alternativa','Puntaje','Costo'],...this.hydro.interventions().map(i=>[i.id,i.name,String(i.score),String(i.cost)])];else if(type==='scenarios')rows=[['ID','Escenario','Caudal máximo','Desbordamiento'],...this.hydro.scenarios().map(s=>[s.id,s.name,String(s.peakFlow),String(s.overflow)])];else rows=[['ID','Categoría','Ubicación','Estado'],...this.hydro.reports().map(r=>[r.id,r.category,r.location,r.status])];const csv='\uFEFF'+rows.map(r=>r.map(c=>`"${c.replaceAll('"','""')}"`).join(';')).join('\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=`hydroguard-${type}.csv`;a.click();URL.revokeObjectURL(url)}}
+import { DatePipe } from '@angular/common';
+import { Component } from '@angular/core';
+import { HydroService } from '../core/hydro.service';
+
+@Component({
+  selector: 'app-reports',
+  standalone: true,
+  imports: [DatePipe],
+  template: `
+    <section class="page-head">
+      <div>
+        <div class="eyebrow">Resumen de demostración</div>
+        <h1>Informe operativo</h1>
+        <p>Estado general de la plataforma y sus principales hallazgos.</p>
+      </div>
+    </section>
+
+    <article class="card preview">
+      <div class="report-header">
+        <div><span>HydroGuard</span><h2>Resumen ejecutivo</h2></div>
+        <small>Actualizado {{hydro.lastUpdated()|date:'dd/MM/yyyy HH:mm'}}</small>
+      </div>
+
+      <div class="summary">
+        <div><small>ACTIVOS</small><b>{{hydro.metrics().active}}</b></div>
+        <div><small>ALERTAS</small><b>{{hydro.activeAlerts().length}}</b></div>
+        <div><small>TRAMOS CRÍTICOS</small><b>2</b></div>
+        <div><small>PROPUESTAS</small><b>3</b></div>
+      </div>
+
+      <div class="finding"><b>Atención prioritaria</b><span>TR-02 presenta una posible obstrucción y requiere inspección física.</span></div>
+      <button class="btn primary" (click)="printReport()">Descargar resumen en PDF</button>
+      <p class="disclaimer">Información ficticia para fines de demostración.</p>
+    </article>
+  `,
+  styles: [`
+    .preview{padding:25px;max-width:880px}.report-header{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:15px}.report-header span{color:var(--cyan);font-weight:800}.report-header h2{font-size:17px;margin:5px 0}.report-header small{font-size:9px;color:#708a95}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.summary div{padding:13px;background:#0e2631;border-radius:8px}.summary small,.summary b{display:block}.summary small{font-size:8px;color:#6c8590}.summary b{font:700 21px 'Manrope';margin-top:5px}.finding{display:flex;flex-direction:column;gap:4px;padding:13px;background:#292217;border:1px solid #4f3d25;border-radius:8px;margin-bottom:16px}.finding b{font-size:10px;color:#f4c468}.finding span{font-size:9px;color:#a89572}.disclaimer{font-size:8px;color:#637d88;margin:10px 0 0}@media(max-width:700px){.summary{grid-template-columns:repeat(2,1fr)}.report-header{gap:15px}}@media print{.page-head,.preview .btn{display:none}.preview{border:0;background:white;color:#111}.summary div{background:#eee}}
+  `],
+})
+export class ReportsComponent {
+  constructor(public hydro: HydroService) {}
+  printReport() { window.print(); }
+}
