@@ -120,7 +120,7 @@ export class HydroMapComponent implements AfterViewInit, OnChanges, OnDestroy {
           : 0;
         const volume = Math.max(0, Math.round(this.rainfall * (8 + zone.runoff / 6) * (1 - parkReduction / 100)));
         const depth = this.projectedDepth(zone, parkReduction);
-        const poolRadius = Math.min(720, Math.max(120, 110 + depth * 20));
+        const poolRadius = Math.min(240, Math.max(85, 80 + depth * 5));
         L.circle(center, { radius: poolRadius, color: '#7dd3fc', weight: 3, dashArray: '6 6', fillColor: '#168ad0', fillOpacity: zone.risk === 'alto' ? 0.44 : zone.risk === 'medio' ? 0.34 : 0.24 })
           .bindTooltip(`<strong>Profundidad proyectada</strong><br>${depth} cm · ${volume} m³ estimados<br>Escenario ${this.comparisonMode === 'after' ? 'intervenido' : 'actual'}`)
           .on('click', () => this.zoneSelected.emit(zone.id))
@@ -134,16 +134,16 @@ export class HydroMapComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (this.decisionMode) {
       const flowPaths: [number, number][][] = this.demoArea === 'arica' ? [
           [[-18.451,-70.255],[-18.456,-70.278],[-18.463,-70.296],[-18.475,-70.311]],
-          [[-18.467,-70.265],[-18.474,-70.287],[-18.482,-70.305],[-18.487,-70.321]],
+          [[-18.467,-70.265],[-18.474,-70.287],[-18.482,-70.305],[-18.487,-70.316]],
           [[-18.492,-70.274],[-18.491,-70.294],[-18.493,-70.315]],
         ] : this.demoArea === 'talcahuano' ? [
           [[-36.704,-73.084],[-36.713,-73.099],[-36.724,-73.115],[-36.727,-73.122]],
           [[-36.721,-73.087],[-36.731,-73.101],[-36.740,-73.114],[-36.743,-73.123]],
           [[-36.746,-73.083],[-36.754,-73.096],[-36.762,-73.107]],
         ] : this.demoArea === 'belem' ? [
-          [[-1.412,-48.440],[-1.431,-48.454],[-1.451,-48.468],[-1.472,-48.490]],
-          [[-1.425,-48.448],[-1.447,-48.458],[-1.463,-48.469],[-1.481,-48.493]],
-          [[-1.420,-48.475],[-1.441,-48.481],[-1.466,-48.500]],
+          [[-1.418,-48.442],[-1.431,-48.454],[-1.451,-48.468],[-1.466,-48.489]],
+          [[-1.425,-48.448],[-1.447,-48.458],[-1.460,-48.466],[-1.468,-48.488]],
+          [[-1.420,-48.475],[-1.438,-48.479],[-1.463,-48.500]],
         ] : [
           [[5.704,-76.635],[5.700,-76.650],[5.691,-76.659],[5.681,-76.668]],
           [[5.686,-76.641],[5.682,-76.653],[5.674,-76.669]],
@@ -153,8 +153,8 @@ export class HydroMapComponent implements AfterViewInit, OnChanges, OnDestroy {
         const arrow = L.divIcon({ className: 'decision-risk-label', html: '<div class="flow-arrow">←</div>', iconSize: [24, 24], iconAnchor: [12, 12] });
         L.marker(path[Math.max(1, path.length - 2)], { icon: arrow, interactive: false }).addTo(decisionLayer);
       });
-      const highPoint: [number, number] = this.demoArea === 'arica' ? [-18.447, -70.255] : this.demoArea === 'talcahuano' ? [-36.704, -73.084] : this.demoArea === 'belem' ? [-1.412, -48.440] : [5.704, -76.638];
-      const lowPoint: [number, number] = this.demoArea === 'arica' ? [-18.480, -70.328] : this.demoArea === 'talcahuano' ? [-36.743, -73.124] : this.demoArea === 'belem' ? [-1.481, -48.505] : [5.674, -76.681];
+      const highPoint: [number, number] = this.demoArea === 'arica' ? [-18.447, -70.255] : this.demoArea === 'talcahuano' ? [-36.704, -73.084] : this.demoArea === 'belem' ? [-1.418, -48.442] : [5.704, -76.638];
+      const lowPoint: [number, number] = this.demoArea === 'arica' ? [-18.480, -70.318] : this.demoArea === 'talcahuano' ? [-36.743, -73.124] : this.demoArea === 'belem' ? [-1.469, -48.501] : [5.674, -76.681];
       const rainIcon = L.divIcon({ className: 'decision-risk-label', html: `<div class="rain-source"><span>☔</span><div><small>PRONÓSTICO</small><b>${this.rainfall} mm de lluvia</b><em>El agua baja por la pendiente</em></div></div>`, iconSize: [1, 1] });
       const lowIcon = L.divIcon({ className: 'decision-risk-label', html: '<div class="terrain-callout"><small>ZONA BAJA</small><b>El agua converge y se acumula</b></div>', iconSize: [1, 1] });
       L.marker(highPoint, { icon: rainIcon, interactive: false }).addTo(decisionLayer);
@@ -180,10 +180,11 @@ export class HydroMapComponent implements AfterViewInit, OnChanges, OnDestroy {
       const color = sensor.status === 'desconectado' ? '#81909b'
         : sensor.level / sensor.capacity > 0.8 ? '#ff6b62'
         : sensor.level / sensor.capacity > 0.6 ? '#f7bd4f' : '#27d3b2';
+      const pointLabel = this.decisionMode ? `<span style="position:absolute;top:26px;left:50%;transform:translateX(-50%);padding:2px 5px;border-radius:4px;background:#061923e8;border:1px solid ${color};color:#e9f6f8;font-size:7px;white-space:nowrap">${sensor.id}</span>` : '';
       const grateIcon = L.divIcon({
         className: 'decision-risk-label',
-        html: `<div style="width:24px;height:24px;border-radius:6px;display:grid;place-items:center;background:#071923;border:3px solid ${color};color:${color};font-size:15px;font-weight:900;box-shadow:0 3px 12px #0009">▦</div>`,
-        iconSize: [24, 24], iconAnchor: [12, 12],
+        html: `<div style="position:relative;width:27px;height:27px;border-radius:7px;display:grid;place-items:center;background:#071923;border:3px solid ${color};color:${color};font-size:16px;font-weight:900;box-shadow:0 3px 12px #0009">▦${pointLabel}</div>`,
+        iconSize: [27, 27], iconAnchor: [13, 13],
       });
       L.marker([sensor.lat, sensor.lng], { icon: grateIcon })
         .bindTooltip(`<strong>Rejilla monitoreada · ${sensor.id}</strong><br>${sensor.name}<br>${sensor.status} · lámina ${sensor.level} cm`)
@@ -222,7 +223,7 @@ export class HydroMapComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (this.showInterventions) greenLayer.addTo(this.map);
     if (this.zones.length) overlays['Zonas vectoriales'] = riskLayer;
     if (this.segments.length) overlays['Red de drenaje'] = drainageLayer;
-    if (this.sensors.length) overlays['Rejillas con sensor'] = sensorLayer;
+    if (this.sensors.length) overlays['Sensores IoT'] = sensorLayer;
     if (this.reservoirs.length) overlays['Reservorios'] = reservoirLayer;
     if (this.interventions.length) overlays['Propuestas verdes'] = greenLayer;
     if (this.decisionMode) overlays['Proyección de profundidad'] = decisionLayer;
@@ -265,9 +266,9 @@ export class HydroMapComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   private topographicBounds(): L.LatLngBounds {
-    if (this.demoArea === 'arica') return L.latLngBounds([[-18.565, -70.405], [-18.405, -70.195]]);
+    if (this.demoArea === 'arica') return L.latLngBounds([[-18.565, -70.420], [-18.405, -70.210]]);
     if (this.demoArea === 'talcahuano') return L.latLngBounds([[-36.79, -73.18], [-36.68, -73.05]]);
-    if (this.demoArea === 'belem') return L.latLngBounds([[-1.53, -48.56], [-1.39, -48.40]]);
+    if (this.demoArea === 'belem') return L.latLngBounds([[-1.49, -48.525], [-1.415, -48.435]]);
     return L.latLngBounds([[5.645, -76.715], [5.725, -76.615]]);
   }
 

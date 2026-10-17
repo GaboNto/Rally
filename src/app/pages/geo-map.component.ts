@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HydroService } from '../core/hydro.service';
-import { GreenIntervention, RiskLevel, RiskZone, Sensor } from '../core/models';
+import { GreenIntervention, RiskLevel, RiskZone } from '../core/models';
 import { HydroMapComponent, SurfaceMode } from '../shared/hydro-map.component';
 
 interface ForecastDay {
@@ -19,7 +19,7 @@ interface ForecastDay {
   imports: [DatePipe, RouterLink, HydroMapComponent],
   template: `
     <section class="page-head">
-      <div><div class="eyebrow">Centro integrado de análisis</div><h1>Mapa de decisión pluvial</h1><p>Pronóstico, topografía, sensores y parques de absorción en un solo flujo.</p></div>
+      <div><div class="eyebrow">Centro integrado de análisis</div><h1>Mapa de decisión pluvial</h1><p>Pronóstico, topografía, drenaje e infraestructura verde en un solo flujo.</p></div>
       <span class="badge amber">Predicción territorial activa</span>
     </section>
 
@@ -52,34 +52,29 @@ interface ForecastDay {
         </div>
         <div class="map-holder">
           <app-hydro-map
-            [sensors]="hydro.demoArea()!=='quibdo'?hydro.sensors():[]" [segments]="hydro.demoArea()!=='quibdo'?hydro.segments():[]"
+            [sensors]="[]" [segments]="hydro.demoArea()!=='quibdo'?hydro.segments():[]"
             [zones]="displayZones()" [reservoirs]="hydro.demoArea()!=='quibdo'?hydro.reservoirs():[]" [interventions]="decisionInterventions()"
             [selectedZoneId]="selectedZone().id" [selectedInterventionIds]="selectedParks()" [showRiskSurface]="true" [surfaceMode]="surfaceMode()"
             [riskOpacity]="surfaceMode()==='susceptibility'?0.24:0.08" [decisionMode]="true" [rainfall]="activeForecast().rain" [comparisonMode]="viewMode()" [demoArea]="hydro.demoArea()"
-            (zoneSelected)="selectZone($event)" (interventionSelected)="togglePark($event)" (sensorSelected)="hydro.selectSensor($event)" />
-          <div class="map-story"><span><i class="water"></i>Profundidad proyectada</span><span><i class="flow"></i>Ruta de escurrimiento</span><span><i class="grate"></i>Rejilla con sensor</span><span><i class="park"></i>Parque de absorción</span><span><i class="risk"></i>Zona prioritaria</span></div>
+            (zoneSelected)="selectZone($event)" (interventionSelected)="togglePark($event)" />
+          <div class="map-story"><span><i class="water"></i>Profundidad proyectada</span><span><i class="flow"></i>Ruta de escurrimiento</span><span><i class="park"></i>Parque de absorción</span><span><i class="risk"></i>Zona prioritaria</span></div>
           <div class="map-caption">Altura del terreno + {{activeForecast().rain}} mm · profundidad recalculada</div>
         </div>
       </article>
 
       <aside class="decision-panel card">
         <div class="panel-head"><div><small>ZONA SELECCIONADA</small><h2>{{selectedZone().name}}</h2></div><span class="risk-badge {{selectedRisk()}}">{{riskLabel(selectedRisk())}}</span></div>
-        <div class="rain-alert" [class.critical]="selectedRiskScore() >= 68"><span>!</span><div><b>{{riskMessage()}}</b><p>{{activeForecast().rain}} mm previstos · la telemetría {{telemetryMessage()}}.</p></div></div>
+        <div class="rain-alert" [class.critical]="selectedRiskScore() >= 68"><span>!</span><div><b>{{riskMessage()}}</b><p>{{activeForecast().rain}} mm previstos · análisis basado en altura, escorrentía y capacidad de drenaje.</p></div></div>
         <div class="integrated-risk">
-          <div class="integrated-head"><div><small>RIESGO INTEGRADO</small><b>{{selectedRiskScore()}}/100</b></div><span>Confianza {{telemetryConfidence()}}%</span></div>
-          <div class="risk-factor"><span>Topografía <b>35%</b></span><i><em [style.width.%]="topographyScore(selectedZone())"></em></i></div>
-          <div class="risk-factor"><span>Pronóstico <b>25%</b></span><i><em [style.width.%]="rainScore()"></em></i></div>
-          <div class="risk-factor sensor"><span>Sensores <b>25%</b></span><i><em [style.width.%]="sensorScore(selectedZone())"></em></i></div>
-          <div class="risk-factor drainage"><span>Drenaje <b>15%</b></span><i><em [style.width.%]="drainageScore(selectedZone())"></em></i></div>
+          <div class="integrated-head"><div><small>RIESGO INTEGRADO</small><b>{{selectedRiskScore()}}/100</b></div><span>Modelo territorial</span></div>
+          <div class="risk-factor"><span>Topografía <b>45%</b></span><i><em [style.width.%]="topographyScore(selectedZone())"></em></i></div>
+          <div class="risk-factor"><span>Pronóstico <b>35%</b></span><i><em [style.width.%]="rainScore()"></em></i></div>
+          <div class="risk-factor drainage"><span>Drenaje <b>20%</b></span><i><em [style.width.%]="drainageScore(selectedZone())"></em></i></div>
         </div>
-        @if (criticalSensor(); as sensor) {
-          <div class="sensor-confirmation"><span>▦</span><div><small>SENSOR INSTALADO EN REJILLA</small><b>{{sensor.id}} · {{sensor.level}}/{{sensor.capacity}} cm</b><p>{{sensor.variation > 0 ? '+' : ''}}{{sensor.variation}} cm cada 10 min · detecta retención antes y después de la rejilla.</p></div><strong>{{sensorFill(sensor)}}%</strong></div>
-        }
         <div class="evidence">
           <h3>¿Por qué se genera el riesgo?</h3>
           <div><span>⌁</span><p><b>Topografía</b><small>{{topographyReason()}}</small></p></div>
           <div><span>≋</span><p><b>Escorrentía estimada</b><small>{{selectedZone().runoff}}% de concentración superficial.</small></p></div>
-          <div><span>▦</span><p><b>Rejillas monitoreadas</b><small>{{sensorEvidenceText()}}</small></p></div>
           <div><span>◇</span><p><b>Drenaje</b><small>{{drainageReason()}}</small></p></div>
         </div>
         <div class="recommendation">
@@ -117,13 +112,14 @@ interface ForecastDay {
       }
     </section>
 
-    <section class="next-step card"><div><span>✓</span><div><small>SIGUIENTE PASO</small><h3>El plan conecta la predicción con una decisión concreta</h3><p>Guarda la combinación seleccionada y genera el informe institucional con sensores, diagnóstico, ubicaciones y hoja de ruta.</p></div></div><a routerLink="/informes" class="btn primary">Abrir informe integral →</a></section>
+    <section class="next-step card"><div><span>✓</span><div><small>SIGUIENTE PASO</small><h3>El plan conecta la predicción con una decisión concreta</h3><p>Guarda la combinación seleccionada y genera el informe institucional con diagnóstico territorial, ubicaciones y hoja de ruta.</p></div></div><a routerLink="/informes" class="btn primary">Abrir informe integral →</a></section>
   `,
   styles: [`
     .decision-flow{display:grid;grid-template-columns:auto 1fr auto 1fr auto 1fr auto;align-items:center;padding:15px 18px;margin-bottom:14px;background:#091c27;border:1px solid var(--line);border-radius:12px}.decision-flow>div{display:flex;align-items:center;gap:9px;color:#5e7884}.decision-flow>div>span{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:#112a35;border:1px solid #25424d;font-size:10px;font-weight:800}.decision-flow p,.decision-flow b,.decision-flow small{display:block;margin:0}.decision-flow b{font-size:10px}.decision-flow small{font-size:8px;margin-top:2px}.decision-flow i{height:1px;background:#23404b;margin:0 14px}.decision-flow .done{color:#c7dbdf}.decision-flow .done>span{background:#123d43;border-color:#2a9d96;color:#61ded3}.decision-flow .done+i{background:#247c79}.forecast{display:grid;grid-template-columns:245px 1fr;gap:18px;padding:16px;margin-bottom:14px}.forecast-intro{display:flex;align-items:center;gap:13px;padding-right:16px;border-right:1px solid var(--line)}.weather-icon{width:40px;height:40px;border-radius:11px;background:#103746;display:grid;place-items:center;font-size:18px}.forecast-intro small{font-size:7px;letter-spacing:1px;color:var(--cyan)}.forecast-intro h2{font-size:13px;margin:4px 0}.forecast-intro p{font-size:8px;color:#66818c;margin:0}.forecast-days{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.forecast-days button{min-width:0;border:1px solid #1b3945;border-radius:9px;background:#0b222d;color:#91a6ae;padding:9px;text-align:left}.forecast-days button:hover,.forecast-days button.active{border-color:#35d4cc;background:#10343d;color:#e1f0f2}.forecast-days span,.forecast-days b,.forecast-days strong,.forecast-days small{display:block}.forecast-days span{font-size:7px;text-transform:uppercase;letter-spacing:.8px}.forecast-days b{font-size:9px;margin:2px 0}.forecast-days strong{font-size:16px;color:#59d9d1;margin:5px 0 2px}.forecast-days small{font-size:7px;color:#68838d}.analysis-grid{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:14px}.map-card{overflow:hidden}.map-toolbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 15px;border-bottom:1px solid var(--line)}.map-toolbar small,.map-toolbar b{display:block}.map-toolbar small{font-size:7px;letter-spacing:1px;color:#5e7b86}.map-toolbar b{font-size:11px;margin-top:3px}.map-controls{display:flex;gap:8px}.segmented{display:flex;background:#071923;border:1px solid #1c3945;padding:3px;border-radius:8px}.segmented button{border:0;background:transparent;color:#667f8a;font-size:8px;padding:6px 9px;border-radius:5px}.segmented button.active{background:#17414b;color:#6ce4dc}.segmented button:disabled{opacity:.35}.map-holder{position:relative;height:590px;padding:9px}.map-story{position:absolute;left:24px;bottom:24px;z-index:500;display:flex;gap:13px;padding:10px 12px;border-radius:9px;background:#061720ed;border:1px solid #294550;color:#a3b6bc;font-size:8px;box-shadow:0 8px 25px #0007}.map-story span{display:flex;align-items:center;gap:6px}.map-story i{width:10px;height:10px;display:block}.map-story .water{border-radius:50%;background:#168ad0;border:2px solid #7dd3fc}.map-story .flow{height:3px;background:#6bc7f5;border-radius:3px;border-top:1px dashed white}.map-story .park{border-radius:50%;background:#35d4cc;box-shadow:0 0 0 3px #22c55e44}.map-story .risk{border:2px solid #ef4444;background:#ef444455}.map-caption{position:absolute;right:22px;bottom:22px;z-index:500;font-size:7px;color:#769099;background:#071923cc;padding:5px 7px;border-radius:5px}.decision-panel{padding:18px}.panel-head{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:15px;border-bottom:1px solid var(--line)}.panel-head small{font-size:7px;letter-spacing:1px;color:#63808b}.panel-head h2{font-size:17px;margin:4px 0}.risk-badge{font-size:8px;text-transform:uppercase;padding:6px 8px;border-radius:20px}.risk-badge.alto{color:#ff8b83;background:#3a2023}.risk-badge.medio{color:#f5c568;background:#372c1b}.risk-badge.bajo{color:#5bdfb2;background:#12332c}.rain-alert{display:flex;gap:10px;padding:12px;margin:14px 0;background:#292418;border:1px solid #51421f;border-radius:9px}.rain-alert.critical{background:#321e22;border-color:#663238}.rain-alert>span{width:24px;height:24px;border-radius:7px;background:#f2b84a;color:#261e0d;display:grid;place-items:center;font-weight:900}.rain-alert.critical>span{background:#ef6b63;color:white}.rain-alert b{font-size:9px}.rain-alert p{font-size:8px;color:#8ba0a8;margin:3px 0 0}.evidence h3{font-size:10px;margin:0 0 7px}.evidence>div{display:flex;gap:9px;padding:8px 0;border-bottom:1px solid #142e39}.evidence>div>span{width:23px;height:23px;border-radius:6px;display:grid;place-items:center;background:#10323d;color:#4bd5ca;font-size:11px}.evidence p,.evidence b,.evidence small{display:block;margin:0}.evidence b{font-size:9px}.evidence small{font-size:8px;color:#6d8791;line-height:1.4;margin-top:2px}.recommendation{margin-top:14px;padding:14px;background:linear-gradient(145deg,#10363b,#0d292f);border:1px solid #23625f;border-radius:10px}.recommendation>small{font-size:7px;letter-spacing:1px;color:#57d8c9}.recommendation h3{font-size:13px;margin:5px 0}.recommendation>p{font-size:8px;color:#7e969e;margin:0}.recommendation-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:11px 0}.recommendation-stats span{font-size:7px;color:#6f8992}.recommendation-stats b{display:block;font-size:10px;color:#c9dadd;margin-bottom:2px}.recommendation .btn{width:100%;font-size:9px}.impact{margin-top:14px;padding:18px}.impact-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px}.impact-head h2{font-size:16px;margin:0 0 4px}.impact-head p{font-size:9px;color:#6d8791;margin:0}.impact-actions{display:flex;gap:7px}.impact-actions button:disabled{opacity:.4}.comparison{display:grid;grid-template-columns:1.2fr repeat(4,1fr);border:1px solid var(--line);border-radius:10px;overflow:hidden}.comparison>div{display:grid;grid-template-rows:repeat(3,auto);padding:11px 13px;border-left:1px solid var(--line)}.comparison>div:first-child{border:0;background:#0d2933}.comparison span{font-size:7px;color:#69838d;text-transform:uppercase;letter-spacing:.5px}.comparison b{font-size:11px;margin:6px 0}.comparison strong{font-size:12px;color:#58d7ca}.comparison em{font-size:7px;color:#4fd5a5;font-style:normal}.saved-message{font-size:8px;color:#58d6ad;margin-top:10px}.portfolio-head{display:flex;justify-content:space-between;align-items:flex-end;margin:22px 0 10px}.portfolio-head h2{font-size:16px;margin:0}.portfolio-head>span{font-size:8px;color:#65d9ce;background:#10333c;padding:6px 9px;border-radius:20px}.park-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.park-option{padding:16px}.park-option.selected{border-color:#39bdb4;box-shadow:inset 0 3px #35d4cc}.park-option-head{display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:9px}.park-option-head>span{width:31px;height:31px;border-radius:8px;background:#10323d;color:#52d8cf;display:grid;place-items:center;font-size:9px;font-weight:800}.park-option-head small{font-size:7px;color:#68838d;text-transform:uppercase}.park-option-head h3{font-size:11px;margin:2px 0}.park-option-head>b{font-size:10px;color:#53d7c9}.park-option>p{font-size:8px;color:#6a8490;margin:11px 0}.park-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:11px}.park-metrics span{padding:8px;background:#0d2832;border-radius:6px}.park-metrics small,.park-metrics b{display:block}.park-metrics small{font-size:6px;color:#607b86}.park-metrics b{font-size:9px;margin-top:3px}.park-option .btn{width:100%;font-size:9px}.next-step{display:flex;justify-content:space-between;align-items:center;padding:17px 18px;margin-top:14px}.next-step>div{display:flex;align-items:center;gap:12px}.next-step>div>span{width:34px;height:34px;border-radius:50%;background:#123a35;color:#4bddac;display:grid;place-items:center}.next-step small{font-size:7px;color:#62b9af;letter-spacing:1px}.next-step h3{font-size:12px;margin:3px 0}.next-step p{font-size:8px;color:#6d8791;margin:0}
     .integrated-risk{padding:12px;margin-bottom:12px;background:#0a222d;border:1px solid #1a3c48;border-radius:9px}.integrated-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.integrated-head small,.integrated-head b{display:block}.integrated-head small{font-size:6px;letter-spacing:1px;color:#68858e}.integrated-head b{font-size:20px;color:#65ddd4;margin-top:2px}.integrated-head>span{font-size:7px;color:#7ea0a8;background:#102f39;padding:5px 7px;border-radius:15px}.risk-factor{display:grid;grid-template-columns:105px 1fr;align-items:center;gap:8px;margin:6px 0}.risk-factor>span{font-size:7px;color:#839ba3;display:flex;justify-content:space-between}.risk-factor>span b{color:#b8cbd0}.risk-factor>i{height:5px;background:#14323d;border-radius:5px;overflow:hidden}.risk-factor em{display:block;height:100%;background:#f0b64c}.risk-factor.sensor em{background:#45d3ca}.risk-factor.drainage em{background:#ef7168}.sensor-confirmation{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:9px;padding:10px 11px;margin-bottom:12px;background:#102e35;border:1px solid #23535c;border-radius:9px}.sensor-confirmation>span{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;background:#16434a;color:#55ddd2}.sensor-confirmation small,.sensor-confirmation b{display:block}.sensor-confirmation small{font-size:6px;letter-spacing:.8px;color:#5fcfc6}.sensor-confirmation b{font-size:9px;margin:2px 0}.sensor-confirmation p{font-size:7px;color:#718d95;margin:0}.sensor-confirmation>strong{font-size:16px;color:#65ddd4}.recommendation-actions{display:grid;grid-template-columns:1fr 1.15fr;gap:7px}.recommendation-actions .btn{text-align:center}
     .map-story .grate{border:2px solid #59ded2;background:repeating-linear-gradient(90deg,#0d3039 0 2px,#59ded2 2px 3px)}
-    @media(max-width:1200px){.analysis-grid{grid-template-columns:1fr}.decision-panel{display:grid;grid-template-columns:1fr 1fr;gap:14px}.panel-head,.rain-alert{grid-column:1/-1}.forecast{grid-template-columns:1fr}.forecast-intro{border-right:0;border-bottom:1px solid var(--line);padding:0 0 12px}.comparison{grid-template-columns:1fr 1fr 1fr}.comparison-label{display:none!important}.park-grid{grid-template-columns:1fr 1fr}}@media(max-width:720px){.decision-flow{grid-template-columns:1fr 1fr;gap:8px}.decision-flow i{display:none}.forecast-days{grid-template-columns:repeat(2,1fr)}.analysis-grid{display:block}.decision-panel{display:block;margin-top:12px}.map-toolbar{height:auto;padding:12px;align-items:flex-start;gap:10px;flex-direction:column}.map-holder{height:500px}.map-controls{width:100%}.segmented{flex:1}.segmented button{flex:1}.map-caption{display:none}.comparison{grid-template-columns:1fr}.comparison>div{border-left:0;border-top:1px solid var(--line)}.impact-head,.next-step{align-items:stretch;flex-direction:column;gap:12px}.park-grid{grid-template-columns:1fr}.recommendation-actions{grid-template-columns:1fr}}
+    .grate-detail{width:100%;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:9px;padding:10px 11px;margin:0 0 12px;text-align:left;color:inherit;background:#0b2933;border:1px solid #24505a;border-radius:9px;cursor:pointer}.grate-symbol{width:27px;height:27px;border-radius:7px;display:grid;place-items:center;background:#123e46;color:#58ddd2}.grate-detail small,.grate-detail b{display:block}.grate-detail small{font-size:6px;letter-spacing:.9px;color:#5fcfc6}.grate-detail b{font-size:9px;margin:2px 0}.grate-detail p{font-size:7px;color:#7a939b;margin:0}.grate-detail>strong{font-size:7px;text-transform:uppercase;padding:5px 7px;border-radius:12px;color:#55dbad;background:#12372f}.grate-detail>strong.atencion{color:#f6ca70;background:#3a2f1d}.grate-detail>strong.obstruida{color:#ff8c84;background:#3b2024}.operating-systems{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.system-card{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:13px;padding:17px;border-top:2px solid #36d4c9}.system-card.intervention{border-top-color:#55d79c}.system-number{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:#113843;color:#57ddd2;font-weight:800}.system-copy small{font-size:7px;letter-spacing:1px;color:#52d6cc}.system-copy h2{font-size:14px;margin:3px 0 5px}.system-copy p{max-width:650px;font-size:8px;line-height:1.55;color:#78929b;margin:0}.system-copy p b{color:#c3d8dc}.system-kpis{display:flex;gap:7px}.system-kpis span{min-width:76px;padding:9px;background:#0b2731;border-radius:8px;color:#6f8992;font-size:7px}.system-kpis b{display:block;color:#d5e6e8;font-size:14px;margin-bottom:2px}.system-kpis .warning b{color:#f4c163}.design-note{grid-column:1/-1;margin:0;padding:8px 12px;border-left:3px solid #4ca6c8;background:#0b202a;color:#77909a;font-size:8px}
+    @media(max-width:1200px){.analysis-grid{grid-template-columns:1fr}.decision-panel{display:grid;grid-template-columns:1fr 1fr;gap:14px}.panel-head,.rain-alert{grid-column:1/-1}.forecast{grid-template-columns:1fr}.forecast-intro{border-right:0;border-bottom:1px solid var(--line);padding:0 0 12px}.comparison{grid-template-columns:1fr 1fr 1fr}.comparison-label{display:none!important}.park-grid{grid-template-columns:1fr 1fr}.operating-systems{grid-template-columns:1fr}}@media(max-width:720px){.decision-flow{grid-template-columns:1fr 1fr;gap:8px}.decision-flow i{display:none}.forecast-days{grid-template-columns:repeat(2,1fr)}.analysis-grid{display:block}.decision-panel{display:block;margin-top:12px}.map-toolbar{height:auto;padding:12px;align-items:flex-start;gap:10px;flex-direction:column}.map-holder{height:500px}.map-controls{width:100%}.segmented{flex:1}.segmented button{flex:1}.map-caption{display:none}.comparison{grid-template-columns:1fr}.comparison>div{border-left:0;border-top:1px solid var(--line)}.impact-head,.next-step{align-items:stretch;flex-direction:column;gap:12px}.park-grid{grid-template-columns:1fr}.recommendation-actions{grid-template-columns:1fr}.system-card{grid-template-columns:36px 1fr}.system-kpis{grid-column:1/-1;flex-wrap:wrap}}
   `],
 })
 export class GeoMapPageComponent {
@@ -158,11 +154,6 @@ export class GeoMapPageComponent {
   readonly selectedRiskScore = computed(() => this.integratedRiskScore(this.selectedZone()));
   readonly selectedRisk = computed(() => this.calculatedRisk(this.selectedZone()));
   readonly recommendedPark = computed(() => this.decisionInterventions().find(park => park.zone === this.selectedZone().name) ?? this.decisionInterventions()[0]);
-  readonly zoneSensors = computed(() => {
-    return this.sensorsForZone(this.selectedZone());
-  });
-  readonly criticalSensor = computed(() => this.zoneSensors().filter(sensor => sensor.status === 'activo').sort((a, b) => (b.level / b.capacity + Math.max(0, b.variation) / 10) - (a.level / a.capacity + Math.max(0, a.variation) / 10))[0]);
-  readonly telemetryConfidence = computed(() => this.zoneSensors().length ? Math.min(96, 62 + this.zoneSensors().filter(sensor => sensor.status === 'activo').length * 11) : 38);
   readonly impactReduction = computed(() => Math.min(65, this.decisionInterventions().filter(park => this.selectedParks().includes(park.id)).reduce((sum, park) => sum + park.runoffReduction, 0)));
   readonly displayZones = computed(() => this.decisionZones().map(zone => ({ ...zone, risk: this.calculatedRisk(zone) })));
   readonly estimatedWater = computed(() => Math.round(this.activeForecast().rain * (8 + this.selectedZone().runoff / 6)));
@@ -194,20 +185,8 @@ export class GeoMapPageComponent {
   }
   riskLabel(risk: RiskLevel) { return risk === 'alto' ? 'Riesgo alto' : risk === 'medio' ? 'Riesgo medio' : 'Riesgo bajo'; }
   riskMessage() { return this.activeForecast().rain < 5 ? 'Evento de baja intensidad; prioridad estructural bajo vigilancia' : this.selectedRiskScore() >= 68 ? 'Riesgo alto confirmado por el análisis integrado' : this.selectedRiskScore() >= 42 ? 'Condición que requiere seguimiento operativo' : 'Condición dentro del rango de observación'; }
-  telemetryMessage() { return this.zoneSensors().length ? (this.sensorScore(this.selectedZone()) >= 65 ? 'confirma presión elevada en la zona' : 'mantiene la zona bajo observación') : 'indica una brecha de cobertura'; }
-  sensorEvidenceText() {
-    if (!this.zoneSensors().length) return 'Sin cobertura: se recomienda instalar un punto de control.';
-    const sensor = this.criticalSensor();
-    return sensor ? `${this.zoneSensors().length} rejillas instrumentadas. ${sensor.id} registra ${sensor.level} cm y una variación de ${sensor.variation > 0 ? '+' : ''}${sensor.variation} cm/10 min; la diferencia entre puntos permite detectar retención u obstrucción.` : `${this.zoneSensors().length} rejillas instrumentadas, sin lectura activa.`;
-  }
-  sensorFill(sensor: Sensor) { return Math.round(sensor.level / sensor.capacity * 100); }
   rainScore() { return Math.min(100, Math.round(this.activeForecast().rain / 45 * 100)); }
   topographyScore(zone: RiskZone) { return ({ bajo: 25, medio: 58, alto: 86 } as const)[zone.risk]; }
-  sensorScore(zone: RiskZone) {
-    const sensors = this.sensorsForZone(zone).filter(sensor => sensor.status === 'activo');
-    if (!sensors.length) return 45;
-    return Math.min(100, Math.round(Math.max(...sensors.map(sensor => sensor.level / sensor.capacity * 82 + Math.max(0, sensor.variation) * 5))));
-  }
   drainageScore(zone: RiskZone) {
     if (this.hydro.demoArea() === 'quibdo') return 52;
     const segment = this.hydro.segments().find(item => item.sector === this.zoneSector(zone));
@@ -225,15 +204,13 @@ export class GeoMapPageComponent {
   conditionForRain(rain: number) { return rain >= 30 ? 'Intensa' : rain >= 18 ? 'Fuerte' : rain >= 7 ? 'Moderada' : rain > 0 ? 'Débil' : 'Sin lluvia'; }
 
   private integratedRiskScore(zone: RiskZone) {
-    let score = this.topographyScore(zone) * .35 + this.rainScore() * .25 + this.sensorScore(zone) * .25 + this.drainageScore(zone) * .15;
+    let score = this.topographyScore(zone) * .45 + this.rainScore() * .35 + this.drainageScore(zone) * .20;
     if (this.viewMode() === 'after') {
       const reduction = this.decisionInterventions().filter(park => park.zone === zone.name && this.selectedParks().includes(park.id)).reduce((sum, park) => sum + park.runoffReduction, 0);
       score -= reduction * .7;
     }
-    const activeSensors = this.sensorsForZone(zone).filter(sensor => sensor.status === 'activo');
-    const criticalLevel = activeSensors.some(sensor => sensor.level / sensor.capacity >= .95);
-    if (!criticalLevel && this.activeForecast().rain < 5) score = Math.min(score, 55);
-    else if (!criticalLevel && this.activeForecast().rain < 10) score = Math.min(score, 64);
+    if (this.activeForecast().rain < 5) score = Math.min(score, 55);
+    else if (this.activeForecast().rain < 10) score = Math.min(score, 64);
     return Math.max(0, Math.min(100, Math.round(score)));
   }
   private calculatedRisk(zone: RiskZone): RiskLevel {
@@ -241,12 +218,10 @@ export class GeoMapPageComponent {
     return score >= 68 ? 'alto' : score >= 42 ? 'medio' : 'bajo';
   }
   private zoneSector(zone: RiskZone) { return zone.name.replace('Sector ', '').replace(' Sur', ''); }
-  private sensorsForZone(zone: RiskZone) { return this.hydro.demoArea() !== 'quibdo' ? this.hydro.sensors().filter(sensor => sensor.sector === this.zoneSector(zone)) : []; }
   private depthForZone(zone: RiskZone) {
     const rain = this.activeForecast().rain;
-    const sensorPressure = Math.max(0, this.sensorScore(zone) - 55) / 180;
     const drainagePressure = Math.max(0, this.drainageScore(zone) - 45) / 220;
-    return Math.max(0, Math.round(rain * (zone.runoff / 100) * .52 * (1 + sensorPressure + drainagePressure)));
+    return Math.max(0, Math.round(rain * (zone.runoff / 100) * .52 * (1 + drainagePressure)));
   }
   private addDays(days: number) { const date = new Date(); date.setHours(12, 0, 0, 0); date.setDate(date.getDate() + days); return date; }
   private loadSavedParks(): string[] {

@@ -15,7 +15,6 @@ export class AppComponent {
   readonly nav=[
     {path:'/dashboard',icon:'⌁',label:'Centro de control'},
     {path:'/mapa',icon:'⌖',label:'Mapa de decisión'},
-    {path:'/sensores',icon:'◉',label:'Red de monitoreo'},
     {path:'/infraestructura-verde',icon:'♧',label:'Plan de intervención'},
     {path:'/informes',icon:'¤',label:'Informes'},
   ];

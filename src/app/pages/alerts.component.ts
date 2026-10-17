@@ -1,7 +1,7 @@
 import { Component, computed, HostListener, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { HydroService } from '../core/hydro.service';
-import { AlertStatus, HydroAlert } from '../core/models';
+import { AlertStatus } from '../core/models';
 
 @Component({
   selector: 'app-alerts',
@@ -75,15 +75,6 @@ import { AlertStatus, HydroAlert } from '../core/models';
               <p>{{alert.action}}</p>
             </section>
 
-            @if (relatedSensors(alert).length) {
-              <section class="telemetry-evidence">
-                <div class="telemetry-head"><div><small>EVIDENCIA DE TELEMETRÍA</small><b>Lecturas que originan o respaldan la alerta</b></div><span>{{relatedSensors(alert).length}} sensor(es)</span></div>
-                @for (sensor of relatedSensors(alert); track sensor.id) {
-                  <div class="telemetry-reading"><i [class.offline]="sensor.status !== 'activo'"></i><div><b>{{sensor.id}} · {{sensor.name}}</b><small>{{sensor.position}} · {{sensor.status}}</small></div><strong>{{sensor.level}}<em>/{{sensor.capacity}} cm</em></strong><span [class.rising]="sensor.variation > 0">{{sensor.variation > 0 ? '+' : ''}}{{sensor.variation}} cm/10 min</span></div>
-                }
-              </section>
-            }
-
             <section class="trace">
               <small>TRAZABILIDAD</small>
               <div class="steps">
@@ -132,8 +123,6 @@ export class AlertsComponent {
     a.status === this.filter()
   ));
   readonly detail = computed(() => this.hydro.alerts().find(a => a.id === this.selectedId()) ?? null);
-  relatedSensors(alert: HydroAlert) { return this.hydro.sensors().filter(sensor => sensor.id === alert.relatedId || sensor.segmentId === alert.relatedId); }
-
   constructor(public hydro: HydroService) {}
 
   update(id: string, status: AlertStatus) {

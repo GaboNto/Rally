@@ -14,17 +14,17 @@ import { HydroService } from '../core/hydro.service';
 
     <article class="card report-document">
       <header class="document-head">
-        <div><span class="brand">Pomerape</span><h2>Propuesta integral de monitoreo y recolección de aguas lluvia</h2><p>Área de operación: {{areaLabel}} · Documento técnico institucional.</p></div>
+        <div><span class="brand">Pomerape</span><h2>Propuesta integral de gestión y recolección de aguas lluvia</h2><p>Área de operación: {{areaLabel}} · Documento técnico institucional.</p></div>
         <div class="document-code"><small>CÓDIGO</small><b>{{documentCode}}</b></div>
       </header>
 
       <section class="executive">
-        <div><span class="section-tag">Resumen ejecutivo</span><h3>Una red que detecta el riesgo y tres parques que retienen el agua</h3><p>La propuesta combina la recuperación de la red IoT con infraestructura verde en los sectores priorizados. Los sensores permiten anticipar obstrucciones y sobrecargas; los parques recolectores capturan, infiltran y reutilizan la escorrentía antes de que llegue a los tramos más exigidos.</p></div>
-        <aside><b>Recomendación prioritaria</b><p>Ejecutar primero {{priorityIntervention.name}} y atender {{prioritySegment.name}}. {{prioritySensor.id}} respalda la prioridad con {{prioritySensor.level}} cm registrados y una tendencia de {{prioritySensor.variation > 0 ? '+' : ''}}{{prioritySensor.variation}} cm/10 min.</p></aside>
+        <div><span class="section-tag">Resumen ejecutivo</span><h3>Un modelo territorial que identifica el riesgo y parques que retienen el agua</h3><p>La propuesta cruza pronóstico de lluvia, altura del terreno, escorrentía y capacidad de drenaje con infraestructura verde en los sectores priorizados. Los parques recolectores capturan, infiltran y reutilizan la escorrentía antes de que llegue a los tramos más exigidos.</p></div>
+        <aside><b>Recomendación prioritaria</b><p>Ejecutar primero {{priorityIntervention.name}} y atender {{prioritySegment.name}}. La topografía, la escorrentía y la condición del drenaje sustentan esta prioridad territorial.</p></aside>
       </section>
 
       <section class="metrics">
-        <div><small>SENSORES INSTALADOS</small><b>{{hydro.sensors().length}}</b><span>{{hydro.metrics().active}} transmitiendo</span></div>
+        <div><small>ZONAS EVALUADAS</small><b>{{hydro.zones().length}}</b><span>análisis territorial</span></div>
         <div><small>INCIDENCIAS ABIERTAS</small><b>{{hydro.activeAlerts().length}}</b><span>requieren seguimiento</span></div>
         <div><small>TRAMOS OBSERVADOS</small><b>{{criticalSegments}}</b><span>con anomalías o evidencia parcial</span></div>
         <div><small>PARQUES PROPUESTOS</small><b>{{hydro.interventions().length}}</b><span>{{totalArea}} m² de intervención</span></div>
@@ -32,12 +32,12 @@ import { HydroService } from '../core/hydro.service';
       </section>
 
       <section class="report-section">
-        <div class="section-title"><div><span class="section-number">1</span><div><h3>Estado y ubicación de sensores</h3><p>Inventario completo de la red de monitoreo.</p></div></div><span class="network-health">{{hydro.metrics().active}} de {{hydro.sensors().length}} operativos</span></div>
+        <div class="section-title"><div><span class="section-number">1</span><div><h3>Zonas de análisis territorial</h3><p>Priorización basada en topografía, escorrentía y drenaje.</p></div></div><span class="network-health">{{hydro.zones().length}} zonas evaluadas</span></div>
         <div class="table-wrap"><table>
-          <thead><tr><th>Sensor</th><th>Ubicación / tramo</th><th>Posición</th><th>Coordenadas</th><th>Estado</th><th>Nivel</th><th>Capacidad usada</th></tr></thead>
-          <tbody>@for (sensor of hydro.sensors(); track sensor.id) {<tr><td><b>{{sensor.id}}</b><small>{{sensor.name}}</small></td><td>{{sensor.sector}} · {{sensor.segmentId}}</td><td>{{sensor.position}}</td><td class="coords">{{sensor.lat.toFixed(4)}}, {{sensor.lng.toFixed(4)}}</td><td><span class="status" [class.ok]="sensor.status === 'activo'" [class.warn]="sensor.status !== 'activo'">{{sensor.status}}</span></td><td>{{sensor.level}} cm</td><td>{{sensorUsage(sensor.level, sensor.capacity)}}%</td></tr>}</tbody>
+          <thead><tr><th>Zona</th><th>Nivel de riesgo</th><th>Escorrentía</th><th>Condición del drenaje</th><th>Intervención sugerida</th></tr></thead>
+          <tbody>@for (zone of hydro.zones(); track zone.id) {<tr><td><b>{{zone.id}}</b><small>{{zone.name}}</small></td><td><span class="status" [class.warn]="zone.risk === 'alto'">{{zone.risk}}</span></td><td>{{zone.runoff}}%</td><td>{{segmentForZone(zone.name)?.condition?.replaceAll('_', ' ') || 'por validar'}}</td><td>{{interventionForZone(zone.name)?.name || 'Evaluación requerida'}}</td></tr>}</tbody>
         </table></div>
-        <div class="observation"><b>Hallazgo de red:</b> {{prioritySensor.id}} utiliza {{sensorUsage(prioritySensor.level, prioritySensor.capacity)}}% de su rango y presenta una variación de {{prioritySensor.variation > 0 ? '+' : ''}}{{prioritySensor.variation}} cm/10 min; esta lectura confirma la prioridad de {{priorityIntervention.zone}}. {{networkAction}}</div>
+        <div class="observation"><b>Hallazgo territorial:</b> {{priorityIntervention.zone}} concentra la mayor prioridad por su relación entre cota, escorrentía y capacidad disponible de drenaje.</div>
       </section>
 
       <section class="report-section">
@@ -59,17 +59,17 @@ import { HydroService } from '../core/hydro.service';
       </section>
 
       <section class="report-section solution-section">
-        <div class="section-title"><div><span class="section-number">4</span><div><h3>Solución completa y plan de implementación</h3><p>Ruta sugerida para pasar del monitoreo a la reducción efectiva del riesgo.</p></div></div></div>
+        <div class="section-title"><div><span class="section-number">4</span><div><h3>Solución completa y plan de implementación</h3><p>Ruta sugerida para pasar del análisis territorial a la reducción efectiva del riesgo.</p></div></div></div>
         <div class="roadmap">
-          <article><span>0–2 meses</span><h4>Estabilizar y validar</h4><p>{{networkAction}} Inspeccionar los tramos prioritarios, levantar topografía de detalle y validar disponibilidad de suelo en las tres coordenadas propuestas.</p></article>
+          <article><span>0–2 meses</span><h4>Caracterizar y validar</h4><p>Inspeccionar los tramos prioritarios, levantar topografía de detalle y validar disponibilidad de suelo en las tres coordenadas propuestas.</p></article>
           <article><span>2–5 meses</span><h4>Diseñar el piloto prioritario</h4><p>Desarrollar la ingeniería de {{priorityIntervention.name}}: cotas, rebalse seguro, especies adecuadas, pretratamiento de sedimentos, acceso de mantención y conexión con el drenaje.</p></article>
-          <article><span>5–9 meses</span><h4>Construir y conectar</h4><p>Ejecutar el parque piloto, incorporar sensores de nivel y humedad, definir umbrales de alerta y medir agua captada, tiempo de vaciado y reducción del caudal punta.</p></article>
+          <article><span>5–9 meses</span><h4>Construir y validar</h4><p>Ejecutar el parque piloto y contrastar el volumen captado, el tiempo de vaciado y la reducción del caudal punta mediante inspecciones y modelación hidráulica.</p></article>
           <article><span>9–18 meses</span><h4>Escalar la red verde</h4><p>Con los resultados del piloto, ejecutar las demás alternativas priorizadas. Integrar mantenimiento preventivo, participación vecinal y tablero de seguimiento.</p></article>
         </div>
-        <div class="success-grid"><div><b>Indicadores de éxito</b><p>Disponibilidad IoT ≥ 95%, reducción del caudal punta, volumen captado por evento, tiempo de vaciado menor a 24 h y disminución de alertas repetidas.</p></div><div><b>Operación y mantenimiento</b><p>Inspección antes de lluvias, retiro de sedimentos, revisión de entradas y rebalses, reposición vegetal y calibración semestral de sensores.</p></div><div><b>Uso del agua</b><p>El agua retenida puede destinarse al riego de áreas verdes, siempre después de validar su calidad y cumplir la normativa sanitaria y municipal aplicable.</p></div></div>
+        <div class="success-grid"><div><b>Indicadores de éxito</b><p>Reducción del caudal punta, volumen captado por evento, tiempo de vaciado menor a 24 h y disminución del área expuesta.</p></div><div><b>Operación y mantenimiento</b><p>Inspección antes de lluvias, retiro de sedimentos, revisión de entradas y rebalses, reposición vegetal y control periódico de infiltración.</p></div><div><b>Uso del agua</b><p>El agua retenida puede destinarse al riego de áreas verdes, siempre después de validar su calidad y cumplir la normativa sanitaria y municipal aplicable.</p></div></div>
       </section>
 
-      <p class="disclaimer">Las ubicaciones, costos y resultados se actualizan con la telemetría disponible y deben validarse mediante levantamiento topográfico, estudio de suelo, modelación hidráulica y revisión normativa antes de su ejecución.</p>
+      <p class="disclaimer">Las ubicaciones, costos y resultados son estimaciones territoriales y deben validarse mediante levantamiento topográfico, estudio de suelo, modelación hidráulica y revisión normativa antes de su ejecución.</p>
     </article>
 
     @if (printingReport()) {
@@ -77,21 +77,21 @@ import { HydroService } from '../core/hydro.service';
         <section class="print-cover">
           <div class="cover-top"><div class="institutional-brand"><span class="brand-seal">P</span><div><b>POMERAPE</b><small>PLATAFORMA DE GESTIÓN PLUVIAL</small></div></div><span class="document-class">INFORME TÉCNICO INSTITUCIONAL</span></div>
           <div class="cover-rule"></div>
-          <div class="cover-body"><span class="cover-kicker">PLAN INTEGRAL DE RESILIENCIA HÍDRICA</span><h1>Propuesta de monitoreo y recolección de aguas lluvia</h1><p>Diagnóstico de la red de sensores y diseño técnico de parques recolectores para reducir la escorrentía urbana.</p></div>
+          <div class="cover-body"><span class="cover-kicker">PLAN INTEGRAL DE RESILIENCIA HÍDRICA</span><h1>Propuesta de gestión y recolección de aguas lluvia</h1><p>Diagnóstico territorial y diseño técnico de parques recolectores para reducir la escorrentía urbana.</p></div>
           <div class="cover-data"><div><small>ÁREA DE ESTUDIO</small><b>{{areaLabel}}</b></div><div><small>CÓDIGO DEL DOCUMENTO</small><b>{{documentCode}}</b></div><div><small>VERSIÓN</small><b>1.0</b></div><div><small>FECHA DE EMISIÓN</small><b>{{hydro.lastUpdated() | date:'dd/MM/yyyy'}}</b></div></div>
-          <div class="cover-summary"><span>OBJETIVO DEL DOCUMENTO</span><p>Presentar una solución integrada que vincule monitoreo IoT, atención de puntos críticos e infraestructura verde para captar, retardar, infiltrar y reutilizar aguas lluvia.</p></div>
+          <div class="cover-summary"><span>OBJETIVO DEL DOCUMENTO</span><p>Presentar una solución integrada que vincule pronóstico, topografía, drenaje e infraestructura verde para captar, retardar, infiltrar y reutilizar aguas lluvia.</p></div>
           <div class="cover-footer"><div><small>ELABORADO POR</small><b>Equipo técnico Pomerape</b></div><div><small>ESTADO</small><b>Documento para evaluación institucional</b></div></div>
         </section>
 
         <section class="print-page">
           <div class="print-page-head"><div><b>POMERAPE</b><span>Informe técnico integral</span></div><span>{{documentCode}} · V1.0</span></div>
           <div class="print-title"><span>01</span><div><small>RESUMEN EJECUTIVO</small><h2>Diagnóstico general y recomendación</h2></div></div>
-          <p class="executive-copy">La solución propuesta articula la recuperación de la red de sensores con tres intervenciones de infraestructura verde. La información disponible identifica a {{priorityIntervention.zone}} como prioridad debido al nivel registrado por {{prioritySensor.id}}, la condición de {{prioritySegment.name}} y la concentración de riesgo urbano.</p>
-          <div class="print-kpis"><div><b>{{hydro.sensors().length}}</b><span>Sensores instalados</span></div><div><b>{{hydro.metrics().active}}</b><span>Sensores activos</span></div><div><b>{{hydro.activeAlerts().length}}</b><span>Incidencias abiertas</span></div><div><b>{{hydro.interventions().length}}</b><span>Parques propuestos</span></div><div><b>{{formatMillions(totalCost)}}</b><span>Inversión estimada</span></div></div>
+          <p class="executive-copy">La solución propuesta articula el análisis de lluvia, topografía y drenaje con tres intervenciones de infraestructura verde. La información disponible identifica a {{priorityIntervention.zone}} como prioridad debido a su escorrentía, la condición de {{prioritySegment.name}} y la concentración de riesgo urbano.</p>
+          <div class="print-kpis"><div><b>{{hydro.zones().length}}</b><span>Zonas evaluadas</span></div><div><b>{{criticalSegments}}</b><span>Tramos prioritarios</span></div><div><b>{{hydro.activeAlerts().length}}</b><span>Incidencias abiertas</span></div><div><b>{{hydro.interventions().length}}</b><span>Parques propuestos</span></div><div><b>{{formatMillions(totalCost)}}</b><span>Inversión estimada</span></div></div>
           <div class="institutional-callout"><b>Recomendación institucional</b><p>Priorizar {{priorityIntervention.name}} en conjunto con la inspección de {{prioritySegment.name}}. Esta primera intervención debe utilizarse como piloto medible antes de ampliar la solución hacia los demás sectores.</p></div>
-          <div class="print-title compact"><span>02</span><div><small>RED DE MONITOREO</small><h2>Estado y ubicación de sensores</h2></div></div>
-          <table class="sensor-table"><thead><tr><th>ID</th><th>Nombre / sector</th><th>Tramo y posición</th><th>Coordenadas</th><th>Estado</th><th>Nivel</th></tr></thead><tbody>@for (sensor of hydro.sensors(); track sensor.id) {<tr><td><b>{{sensor.id}}</b></td><td>{{sensor.name}}<br><small>{{sensor.sector}}</small></td><td>{{sensor.segmentId}} · {{sensor.position}}</td><td>{{sensor.lat.toFixed(4)}}<br>{{sensor.lng.toFixed(4)}}</td><td><span class="print-status" [class.issue]="sensor.status !== 'activo'">{{sensor.status}}</span></td><td>{{sensor.level}} / {{sensor.capacity}} cm<br><small>{{sensorUsage(sensor.level, sensor.capacity)}}% utilizado</small></td></tr>}</tbody></table>
-          <div class="technical-note"><b>Acción inmediata de red</b><p>{{networkAction}} Reforzar el seguimiento operativo de {{prioritySensor.id}}.</p></div>
+          <div class="print-title compact"><span>02</span><div><small>ANÁLISIS TERRITORIAL</small><h2>Zonas y criterios de priorización</h2></div></div>
+          <table><thead><tr><th>Zona</th><th>Riesgo</th><th>Escorrentía</th><th>Drenaje</th><th>Alternativa propuesta</th></tr></thead><tbody>@for (zone of hydro.zones(); track zone.id) {<tr><td><b>{{zone.id}}</b><br>{{zone.name}}</td><td>{{zone.risk}}</td><td>{{zone.runoff}}%</td><td>{{segmentForZone(zone.name)?.condition?.replaceAll('_', ' ') || 'por validar'}}</td><td>{{interventionForZone(zone.name)?.name || 'Evaluación requerida'}}</td></tr>}</tbody></table>
+          <div class="technical-note"><b>Acción inmediata</b><p>Validar cotas, suelo disponible y capacidad hidráulica en {{priorityIntervention.zone}} antes del diseño definitivo.</p></div>
           <div class="print-page-footer"><span>Pomerape · Informe técnico institucional</span><span>Página 2 de 4</span></div>
         </section>
 
@@ -108,11 +108,11 @@ import { HydroService } from '../core/hydro.service';
         <section class="print-page last-page">
           <div class="print-page-head"><div><b>POMERAPE</b><span>Informe técnico integral</span></div><span>{{documentCode}} · V1.0</span></div>
           <div class="print-title"><span>05</span><div><small>HOJA DE RUTA</small><h2>Plan de implementación</h2></div></div>
-          <div class="print-roadmap"><article><span>ETAPA 1 · 0–2 MESES</span><h3>Estabilizar y validar</h3><p>{{networkAction}} Inspeccionar los tramos prioritarios, ejecutar levantamiento topográfico y validar disponibilidad de suelo.</p></article><article><span>ETAPA 2 · 2–5 MESES</span><h3>Diseñar el piloto</h3><p>Preparar ingeniería, permisos, cotas, rebalse seguro, selección vegetal, pretratamiento de sedimentos y acceso de mantención.</p></article><article><span>ETAPA 3 · 5–9 MESES</span><h3>Construir y conectar</h3><p>Ejecutar el parque piloto, incorporar telemetría y medir volumen captado, tiempo de vaciado y reducción del caudal punta.</p></article><article><span>ETAPA 4 · 9–18 MESES</span><h3>Evaluar y escalar</h3><p>Validar el desempeño y extender la solución hacia los demás sectores, con mantenimiento preventivo y seguimiento ciudadano.</p></article></div>
+          <div class="print-roadmap"><article><span>ETAPA 1 · 0–2 MESES</span><h3>Caracterizar y validar</h3><p>Inspeccionar los tramos prioritarios, ejecutar levantamiento topográfico y validar disponibilidad de suelo.</p></article><article><span>ETAPA 2 · 2–5 MESES</span><h3>Diseñar el piloto</h3><p>Preparar ingeniería, permisos, cotas, rebalse seguro, selección vegetal, pretratamiento de sedimentos y acceso de mantención.</p></article><article><span>ETAPA 3 · 5–9 MESES</span><h3>Construir y verificar</h3><p>Ejecutar el parque piloto y contrastar volumen captado, tiempo de vaciado y reducción del caudal punta.</p></article><article><span>ETAPA 4 · 9–18 MESES</span><h3>Evaluar y escalar</h3><p>Validar el desempeño y extender la solución hacia los demás sectores, con mantenimiento preventivo y seguimiento ciudadano.</p></article></div>
           <div class="print-title compact"><span>06</span><div><small>CONTROL Y SEGUIMIENTO</small><h2>Indicadores institucionales</h2></div></div>
-          <table><thead><tr><th>Indicador</th><th>Meta referencial</th><th>Frecuencia</th><th>Responsable sugerido</th></tr></thead><tbody><tr><td>Disponibilidad de la red IoT</td><td>≥ 95%</td><td>Mensual</td><td>Unidad de monitoreo</td></tr><tr><td>Reducción del caudal punta</td><td>Validar contra línea base</td><td>Por evento</td><td>Equipo hidráulico</td></tr><tr><td>Tiempo de vaciado del parque</td><td>&lt; 24 horas</td><td>Por evento</td><td>Operación y mantención</td></tr><tr><td>Volumen de agua captada</td><td>Registro continuo</td><td>Por evento</td><td>Unidad de monitoreo</td></tr><tr><td>Incidencias recurrentes</td><td>Tendencia decreciente</td><td>Trimestral</td><td>Coordinación municipal</td></tr></tbody></table>
+          <table><thead><tr><th>Indicador</th><th>Meta referencial</th><th>Frecuencia</th><th>Responsable sugerido</th></tr></thead><tbody><tr><td>Reducción del caudal punta</td><td>Validar contra línea base</td><td>Por evento</td><td>Equipo hidráulico</td></tr><tr><td>Tiempo de vaciado del parque</td><td>&lt; 24 horas</td><td>Por evento</td><td>Operación y mantención</td></tr><tr><td>Volumen de agua captada</td><td>Validar por balance hídrico</td><td>Por evento</td><td>Equipo hidráulico</td></tr><tr><td>Superficie inundable</td><td>Tendencia decreciente</td><td>Anual</td><td>Planificación territorial</td></tr><tr><td>Incidencias recurrentes</td><td>Tendencia decreciente</td><td>Trimestral</td><td>Coordinación municipal</td></tr></tbody></table>
           <div class="approval-grid"><div><small>REVISIÓN TÉCNICA</small><span></span><p>Nombre / cargo / firma</p></div><div><small>APROBACIÓN INSTITUCIONAL</small><span></span><p>Nombre / cargo / firma</p></div></div>
-          <div class="legal-note"><b>Alcance del documento</b><p>Las ubicaciones, costos y resultados se sustentan en la información territorial y telemetría disponible. Requieren levantamiento topográfico, estudio de suelo, modelación hidráulica y revisión ambiental, sanitaria y municipal antes de su ejecución.</p></div>
+          <div class="legal-note"><b>Alcance del documento</b><p>Las ubicaciones, costos y resultados se sustentan en información territorial y proyecciones hidrológicas. Requieren levantamiento topográfico, estudio de suelo, modelación hidráulica y revisión ambiental, sanitaria y municipal antes de su ejecución.</p></div>
           <div class="print-page-footer"><span>Pomerape · Informe técnico institucional</span><span>Página 4 de 4</span></div>
         </section>
       </article>
@@ -139,11 +139,10 @@ export class ReportsComponent {
   get totalReduction() { return this.hydro.interventions().reduce((total, item) => total + item.runoffReduction, 0); }
   get areaLabel() { return this.hydro.demoArea() === 'talcahuano' ? 'Talcahuano, Región del Biobío' : this.hydro.demoArea() === 'belem' ? 'Belém, Pará, Brasil' : this.hydro.demoArea() === 'quibdo' ? 'Quibdó, Colombia' : 'Arica, Chile'; }
   get documentCode() { return this.hydro.demoArea() === 'talcahuano' ? 'PMR-TH-001' : this.hydro.demoArea() === 'belem' ? 'PMR-BL-001' : this.hydro.demoArea() === 'quibdo' ? 'PMR-QD-001' : 'PMR-AR-001'; }
-  get prioritySensor() { return [...this.hydro.sensors()].filter(sensor => sensor.status === 'activo').sort((a, b) => (b.level / b.capacity + Math.max(0, b.variation) / 10) - (a.level / a.capacity + Math.max(0, a.variation) / 10))[0] ?? this.hydro.sensors()[0]; }
   get priorityIntervention() { return [...this.hydro.interventions()].sort((a, b) => b.score - a.score)[0]; }
   get prioritySegment() { return [...this.relevantSegments].sort((a, b) => b.confidence - a.confidence)[0] ?? this.hydro.segments()[0]; }
-  get networkAction() { const unavailable = this.hydro.sensors().filter(sensor => sensor.status !== 'activo').map(sensor => sensor.id); return unavailable.length ? `Recuperar además los puntos ${unavailable.join(' y ')}.` : 'Mantener la disponibilidad y calibración de la red.'; }
-  sensorUsage(level: number, capacity: number) { return Math.round((level / capacity) * 100); }
+  segmentForZone(zoneName: string) { const sector = zoneName.replace('Sector ', '').replace(' Sur', ''); return this.hydro.segments().find(segment => segment.sector === sector); }
+  interventionForZone(zoneName: string) { return this.hydro.interventions().find(item => item.zone === zoneName); }
   formatCurrency(value: number) { return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(value); }
   formatMillions(value: number) { return '$' + (value / 1_000_000).toFixed(1).replace('.', ',') + ' M'; }
   parkDescription(index: number) { return ['Parque de captación prioritario junto al sistema central, diseñado para interceptar escorrentía urbana antes de ingresar al colector más exigido.','Corredor verde lineal que recibe aportes del eje Norte, desacelera el flujo y favorece infiltración mediante vegetación y suelo filtrante.','Depresión vegetada de mayor superficie para retener excedentes del sector costero y reducir la presión sobre la descarga final.'][index]; }

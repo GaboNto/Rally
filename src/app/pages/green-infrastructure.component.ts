@@ -29,34 +29,20 @@ import { GreenIntervention } from '../core/models';
           <div class="evidence-grid">
             <div><small>LLUVIA PREVISTA</small><b>{{rainfall()}} mm</b><span>{{rainfall() >= 30 ? 'Evento intenso' : 'Evento moderado'}}</span></div>
             <div><small>ESCORRENTÍA</small><b>{{selectedZone().runoff}}%</b><span>Concentración superficial</span></div>
-            <div><small>SENSORES VINCULADOS</small><b>{{zoneSensorCount()}}</b><span>Confianza {{telemetryConfidence()}}%</span></div>
-            <div><small>RIESGO INTEGRADO</small><b>{{integratedRiskScore()}}/100</b><span>Topografía + lluvia + telemetría</span></div>
-          </div>
-          <div class="telemetry-brief">
-            <div class="telemetry-title"><div><small>EVIDENCIA DE TELEMETRÍA</small><h3>Los sensores que justifican esta intervención</h3></div><span>{{telemetryStatus()}}</span></div>
-            @if(zoneSensors().length){
-              <div class="sensor-list">
-                @for(sensor of zoneSensors();track sensor.id){
-                  <div class="sensor-row" [class.offline]="sensor.status!=='activo'"><span class="sensor-dot"></span><div><b>{{sensor.id}}</b><small>{{sensor.name}} · {{sensor.position}}</small></div><strong>{{sensor.level}}<i>/{{sensor.capacity}} cm</i></strong><em>{{sensor.variation > 0 ? '+' : ''}}{{sensor.variation}} cm/10 min</em><mark>{{sensor.status}}</mark></div>
-                }
-              </div>
-              <div class="sensor-conclusion"><span>✓</span><p><b>{{sensorConclusion()}}</b><small>{{monitoringRole()}}</small></p></div>
-            } @else {
-              <div class="coverage-gap"><span>+</span><p><b>Instalar sensor de nivel antes de ejecutar</b><small>La zona no tiene cobertura suficiente para establecer una línea base y comprobar el impacto posterior.</small></p></div>
-            }
+            <div><small>CAPACIDAD DE DRENAJE</small><b>{{drainageRiskScore()}}/100</b><span>Condición del tramo</span></div>
+            <div><small>RIESGO INTEGRADO</small><b>{{integratedRiskScore()}}/100</b><span>Topografía + lluvia + drenaje</span></div>
           </div>
           <div class="problem-statement"><span>!</span><div><small>PROBLEMA A RESOLVER</small><b>{{problemStatement()}}</b><p>{{objectiveStatement()}}</p></div></div>
         </article>
 
         <article class="card solution-view">
-          <div class="solution-heading"><div><small>COMPARACIÓN DEL ESCENARIO</small><h2>Qué cambia al incorporar el parque</h2><p>La misma lluvia y el mismo punto de medición, comparados antes y después de la intervención.</p></div><div class="reduction-badge"><b>−{{waterReduction()}}%</b><span>agua acumulada</span></div></div>
+          <div class="solution-heading"><div><small>COMPARACIÓN DEL ESCENARIO</small><h2>Qué cambia al incorporar el parque</h2><p>La misma lluvia y condición territorial, comparadas antes y después de la intervención.</p></div><div class="reduction-badge"><b>−{{waterReduction()}}%</b><span>agua acumulada</span></div></div>
           <div class="scenario-comparison">
             <section class="scenario-panel current">
               <header><div><small>01 · SITUACIÓN ACTUAL</small><h3>El agua llega directamente al punto bajo</h3></div><span class="status danger">Riesgo {{priority().toLowerCase()}}</span></header>
               <div class="scenario-canvas">
                 <div class="rain-source"><span>☁</span><b>{{rainfall()}} mm</b><small>Lluvia prevista</small></div>
                 <div class="slope-line"></div><div class="runoff-arrow a1">→</div><div class="runoff-arrow a2">→</div>
-                <div class="monitor-point"><i></i><b>{{verificationSensorId()}}</b><small>{{verificationSensorLevel()}} cm</small></div>
                 <div class="water-body"><span></span><b>{{currentWater()}} m³</b><small>agua acumulada</small></div>
               </div>
               <div class="scenario-summary"><div><small>CAUDAL MÁXIMO</small><b>{{currentPeak() | number:'1.2-2'}} m³/s</b></div><div><small>TIEMPO DE DRENAJE</small><b>{{currentDrainHours() | number:'1.1-1'}} h</b></div><p>La escorrentía se concentra sin una superficie intermedia de retención.</p></div>
@@ -70,13 +56,12 @@ import { GreenIntervention } from '../core/models';
                 <div class="rain-source"><span>☁</span><b>{{rainfall()}} mm</b><small>Lluvia prevista</small></div>
                 <div class="slope-line"></div><div class="runoff-arrow a1">→</div>
                 <div class="absorption-park"><span>♧</span><b>{{type()}}</b><small>captura {{captureCapacity()}} m³</small><i></i></div>
-                <div class="monitor-point"><i></i><b>{{verificationSensorId()}}</b><small>verifica impacto</small></div>
                 <div class="water-body reduced"><span></span><b>{{projectedWater()}} m³</b><small>agua remanente</small></div>
               </div>
-              <div class="scenario-summary"><div><small>CAUDAL MÁXIMO</small><b>{{projectedPeak() | number:'1.2-2'}} m³/s</b></div><div><small>TIEMPO DE DRENAJE</small><b>{{projectedDrainHours() | number:'1.1-1'}} h</b></div><p>El sensor comprueba la reducción y permite ajustar la operación del parque.</p></div>
+              <div class="scenario-summary"><div><small>CAUDAL MÁXIMO</small><b>{{projectedPeak() | number:'1.2-2'}} m³/s</b></div><div><small>TIEMPO DE DRENAJE</small><b>{{projectedDrainHours() | number:'1.1-1'}} h</b></div><p>La modelación territorial permite comparar la reducción esperada y ajustar el diseño del parque.</p></div>
             </section>
           </div>
-          <div class="process-strip"><div><span>1</span><p><b>Predecir</b><small>Pronóstico y topografía</small></p></div><i></i><div><span>2</span><p><b>Confirmar</b><small>Lectura de sensores</small></p></div><i></i><div><span>3</span><p><b>Captar</b><small>Parque de absorción</small></p></div><i></i><div><span>4</span><p><b>Verificar</b><small>Medición posterior</small></p></div></div>
+          <div class="process-strip"><div><span>1</span><p><b>Predecir</b><small>Pronóstico de lluvia</small></p></div><i></i><div><span>2</span><p><b>Modelar</b><small>Altura y escorrentía</small></p></div><i></i><div><span>3</span><p><b>Captar</b><small>Parque de absorción</small></p></div><i></i><div><span>4</span><p><b>Comparar</b><small>Impacto proyectado</small></p></div></div>
         </article>
 
         <article class="card impact-card">
@@ -135,15 +120,6 @@ export class GreenInfrastructureComponent {
   readonly saved = signal(false);
 
   readonly selectedZone = computed(() => this.hydro.zones().find(zone => zone.id === this.zoneId()) ?? this.hydro.zones()[0]);
-  readonly zoneSensors = computed(() => this.hydro.sensors().filter(sensor => sensor.sector === this.zoneSector()));
-  readonly zoneSensorCount = computed(() => this.zoneSensors().length);
-  readonly criticalSensor = computed(() => this.zoneSensors().filter(sensor => sensor.status === 'activo').sort((a, b) => (b.level / b.capacity + Math.max(0, b.variation) / 10) - (a.level / a.capacity + Math.max(0, a.variation) / 10))[0]);
-  readonly telemetryConfidence = computed(() => this.zoneSensors().length ? Math.min(96, 62 + this.zoneSensors().filter(sensor => sensor.status === 'activo').length * 11) : 38);
-  readonly sensorRiskScore = computed(() => {
-    const active = this.zoneSensors().filter(sensor => sensor.status === 'activo');
-    if (!active.length) return 45;
-    return Math.min(100, Math.round(Math.max(...active.map(sensor => sensor.level / sensor.capacity * 82 + Math.max(0, sensor.variation) * 5))));
-  });
   readonly drainageRiskScore = computed(() => {
     const segment = this.hydro.segments().find(item => item.sector === this.zoneSector());
     return segment ? ({ normal: 22, no_concluyente: 48, posible_obstruccion: 88, sobrecarga: 96 } as const)[segment.condition] : 45;
@@ -151,12 +127,12 @@ export class GreenInfrastructureComponent {
   readonly integratedRiskScore = computed(() => {
     const topography = ({ bajo: 25, medio: 58, alto: 86 } as const)[this.selectedZone().risk];
     const rain = Math.min(100, this.rainfall() / 45 * 100);
-    return Math.round(topography * .35 + rain * .25 + this.sensorRiskScore() * .25 + this.drainageRiskScore() * .15);
+    return Math.round(topography * .45 + rain * .35 + this.drainageRiskScore() * .20);
   });
   readonly priority = computed(() => this.integratedRiskScore() >= 68 ? 'Alta' : this.integratedRiskScore() >= 42 ? 'Media' : 'Preventiva');
   readonly captureCapacity = computed(() => Math.round(this.area() * 0.16 + this.rainfall() * 4.2));
   readonly waterReduction = computed(() => Math.min(48, Math.round(7 + this.area() / 35 + this.selectedZone().runoff / 11)));
-  readonly currentWater = computed(() => Math.round(this.rainfall() * (8 + this.selectedZone().runoff / 6) * (1 + Math.max(0, this.sensorRiskScore() - 50) / 300)));
+  readonly currentWater = computed(() => Math.round(this.rainfall() * (8 + this.selectedZone().runoff / 6) * (1 + Math.max(0, this.drainageRiskScore() - 50) / 360)));
   readonly projectedWater = computed(() => Math.round(this.currentWater() * (1 - this.waterReduction() / 100)));
   readonly currentPeak = computed(() => +(0.9 + this.rainfall() / 20 + this.selectedZone().runoff / 100).toFixed(2));
   readonly projectedPeak = computed(() => +(this.currentPeak() * (1 - this.waterReduction() / 115)).toFixed(2));
@@ -196,27 +172,12 @@ export class GreenInfrastructureComponent {
   markChanged() { this.evaluated.set(false); this.saved.set(false); }
   evaluate() { this.evaluated.set(true); this.viewMode.set('after'); this.saved.set(false); }
   savePlan() {
-    localStorage.setItem('pomerape-intervention-plan', JSON.stringify({ zoneId: this.zoneId(), rainfall: this.rainfall(), type: this.type(), area: this.area(), budget: this.budget(), captureCapacity: this.captureCapacity(), reduction: this.waterReduction(), estimatedCost: this.estimatedCost(), integratedRisk: this.integratedRiskScore(), sensorIds: this.zoneSensors().map(sensor => sensor.id), verificationSensor: this.criticalSensor()?.id, savedAt: new Date().toISOString() }));
+    localStorage.setItem('pomerape-intervention-plan', JSON.stringify({ zoneId: this.zoneId(), rainfall: this.rainfall(), type: this.type(), area: this.area(), budget: this.budget(), captureCapacity: this.captureCapacity(), reduction: this.waterReduction(), estimatedCost: this.estimatedCost(), integratedRisk: this.integratedRiskScore(), savedAt: new Date().toISOString() }));
     this.saved.set(true);
   }
   riskLabel() { return this.selectedZone().risk === 'alto' ? 'Riesgo alto' : this.selectedZone().risk === 'medio' ? 'Riesgo medio' : 'Riesgo bajo'; }
-  telemetryStatus() { return this.zoneSensors().length ? `${this.zoneSensors().filter(sensor => sensor.status === 'activo').length}/${this.zoneSensors().length} operativos` : 'Sin cobertura'; }
-  verificationSensorId() { return this.criticalSensor()?.id || 'Sensor nuevo'; }
-  verificationSensorLevel() { return this.criticalSensor()?.level || 0; }
-  sensorConclusion() {
-    const sensor = this.criticalSensor();
-    if (!sensor) return 'La decisión requiere una medición de línea base.';
-    return this.sensorRiskScore() >= 65 ? `${sensor.id} confirma acumulación y tendencia ascendente.` : `${sensor.id} establece la línea base de comportamiento de la zona.`;
-  }
-  monitoringRole() {
-    const sensor = this.criticalSensor();
-    return sensor ? `${sensor.id} quedará como punto de control para comparar nivel, caudal y tiempo de drenaje antes y después de la intervención.` : 'El nuevo sensor deberá medir nivel, tendencia y tiempo de vaciado antes y después de la obra.';
-  }
-  problemStatement() {
-    const sensor = this.criticalSensor();
-    return sensor && this.sensorRiskScore() >= 65 ? `La topografía anticipa acumulación y ${sensor.id} confirma un nivel de ${sensor.level} cm con tendencia de ${sensor.variation > 0 ? '+' : ''}${sensor.variation} cm/10 min.` : 'La topografía y el pronóstico indican aumento de escorrentía con capacidad limitada de infiltración local.';
-  }
-  objectiveStatement() { return `Captar parte del volumen antes de que alcance el punto crítico y comprobar la reducción mediante ${this.criticalSensor()?.id || 'un nuevo sensor de control'}.`; }
+  problemStatement() { return 'La topografía y el pronóstico indican aumento de escorrentía con capacidad limitada de infiltración local.'; }
+  objectiveStatement() { return 'Captar parte del volumen antes de que alcance el punto crítico y reducir la profundidad y el tiempo de permanencia del agua.'; }
   scoreMessage() { return this.estimatedScore() >= 80 ? 'Alternativa prioritaria para avanzar a validación técnica.' : this.estimatedScore() >= 65 ? 'Alternativa viable con ajustes de superficie o presupuesto.' : 'Se recomienda revisar dimensiones y disponibilidad del terreno.'; }
   private zoneSector() { return this.selectedZone().name.replace('Sector ', '').replace(' Sur', ''); }
 }
