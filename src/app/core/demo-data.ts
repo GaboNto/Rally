@@ -71,7 +71,7 @@ export const DEMO_SCENARIOS: ScenarioResult[] = [
 ];
 
 export const DEMO_REPORTS: CommunityReport[] = [
-  { id:'RC-028', category:'Sumidero obstruido', location:'Av. Demo 1240, Sector Centro', description:'Acumulación visible junto a rejilla.', reporter:'Vecino verificado', status:'inspeccion', createdAt:new Date(now-110*60_000).toISOString(), assignee:'Cuadrilla Centro' },
+  { id:'RC-028', category:'Sumidero obstruido', location:'Av. 18 de Septiembre 1240, Sector Centro', description:'Acumulación visible junto a rejilla.', reporter:'Vecino verificado', status:'inspeccion', createdAt:new Date(now-110*60_000).toISOString(), assignee:'Cuadrilla Centro' },
   { id:'RC-027', category:'Acumulación de agua', location:'Pasaje Piloto, Sector Norte', description:'Agua permanece luego de la lluvia.', reporter:'Reporte ciudadano', status:'validado', createdAt:new Date(now-210*60_000).toISOString() },
   { id:'RC-026', category:'Sumidero obstruido', location:'Calle Referencia, Sector Costero', description:'Residuos en acceso al sumidero.', reporter:'Reporte ciudadano', status:'resuelto', createdAt:new Date(now-1500*60_000).toISOString(), assignee:'Cuadrilla Costera' },
 ];

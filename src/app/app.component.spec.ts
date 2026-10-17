@@ -26,10 +26,10 @@ describe('AppComponent', () => {
     expect(app.nav.length).toBe(9);
   });
 
-  it('should render the HydroGuard brand', () => {
+  it('should render the Pomerape brand', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.brand')?.textContent).toContain('HydroGuard');
+    expect(compiled.querySelector('.brand')?.textContent).toContain('Pomerape');
   });
 });

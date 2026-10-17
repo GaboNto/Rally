@@ -1,11 +1,10 @@
 <div class="app-shell">
   <aside class="sidebar" [class.open]="menuOpen()">
-    <a class="brand" routerLink="/dashboard" (click)="menuOpen.set(false)"><span class="brand-mark"><i></i><i></i><i></i></span><span><b>HydroGuard</b><small>PLATAFORMA PLUVIAL</small></span></a>
-    <div class="demo-chip"><span></span> ENTORNO DE DEMOSTRACIÓN</div>
+    <a class="brand" routerLink="/dashboard" (click)="menuOpen.set(false)"><span class="brand-mark"><i></i><i></i><i></i></span><span><b>Pomerape</b><small>PLATAFORMA PLUVIAL</small></span></a>
     <nav aria-label="Navegación principal">@for(item of nav;track item.path){<a [routerLink]="item.path" routerLinkActive="active" (click)="menuOpen.set(false)"><span class="nav-icon">{{item.icon}}</span>{{item.label}} @if(item.path==='/alertas'&&activeAlerts()){<em>{{activeAlerts()}}</em>}</a>}</nav>
   </aside>
   <div class="main-wrap">
-    <header class="topbar"><button class="menu-toggle" (click)="menuOpen.set(!menuOpen())" aria-label="Abrir menú">☰</button><div class="location"><span>⌖</span><label><small>ÁREA DE DEMOSTRACIÓN</small><select [value]="hydro.demoArea()" (change)="changeDemoArea($event)" aria-label="Seleccionar área de demostración"><option value="arica">Arica, Chile</option><option value="quibdo">Quibdó, Colombia</option></select></label></div><div class="top-actions"><div class="time"><b>{{clock()|date:'HH:mm'}}</b><small>{{clock()|date:"dd MMM yyyy":"":"es-CL"}}</small></div><a routerLink="/alertas" class="alert-bell" aria-label="Ver alertas">!<em>{{activeAlerts()}}</em></a><div class="avatar">GM</div></div></header>
+    <header class="topbar"><button class="menu-toggle" (click)="menuOpen.set(!menuOpen())" aria-label="Abrir menú">☰</button><div class="location"><span>⌖</span><label><small>ÁREA DE OPERACIÓN</small><select [value]="hydro.demoArea()" (change)="changeDemoArea($event)" aria-label="Seleccionar área de operación"><option value="arica">Arica, Chile</option><option value="quibdo">Quibdó, Colombia</option></select></label></div><div class="top-actions"><div class="time"><b>{{clock()|date:'HH:mm'}}</b><small>{{clock()|date:"dd MMM yyyy":"":"es-CL"}}</small></div><a routerLink="/alertas" class="alert-bell" aria-label="Ver alertas">!<em>{{activeAlerts()}}</em></a><div class="avatar">GM</div></div></header>
     <main><router-outlet /></main>
   </div>
 </div>
