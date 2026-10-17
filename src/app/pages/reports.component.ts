@@ -19,7 +19,7 @@ import { HydroService } from '../core/hydro.service';
       </header>
 
       <section class="executive">
-        <div><span class="section-tag">Resumen ejecutivo</span><h3>Un modelo territorial que identifica el riesgo y parques que retienen el agua</h3><p>La propuesta cruza pronóstico de lluvia, altura del terreno, escorrentía y capacidad de drenaje con infraestructura verde en los sectores priorizados. Los parques recolectores capturan, infiltran y reutilizan la escorrentía antes de que llegue a los tramos más exigidos.</p></div>
+        <div><span class="section-tag">Resumen ejecutivo</span><h3>Un modelo territorial que identifica el riesgo y dimensiona bioesponjas urbanas</h3><p>La propuesta cruza pronóstico de lluvia, altura del terreno, escorrentía y capacidad de drenaje para ubicar una solución modular compacta. Cada bioesponja intercepta, almacena, filtra y libera gradualmente la escorrentía antes de que alcance los puntos bajos.</p></div>
         <aside><b>Recomendación prioritaria</b><p>Ejecutar primero {{priorityIntervention.name}} y atender {{prioritySegment.name}}. La topografía, la escorrentía y la condición del drenaje sustentan esta prioridad territorial.</p></aside>
       </section>
 
@@ -27,8 +27,8 @@ import { HydroService } from '../core/hydro.service';
         <div><small>ZONAS EVALUADAS</small><b>{{hydro.zones().length}}</b><span>análisis territorial</span></div>
         <div><small>INCIDENCIAS ABIERTAS</small><b>{{hydro.activeAlerts().length}}</b><span>requieren seguimiento</span></div>
         <div><small>TRAMOS OBSERVADOS</small><b>{{criticalSegments}}</b><span>con anomalías o evidencia parcial</span></div>
-        <div><small>PARQUES PROPUESTOS</small><b>{{hydro.interventions().length}}</b><span>{{totalArea}} m² de intervención</span></div>
-        <div><small>INVERSIÓN ESTIMADA</small><b>{{formatMillions(totalCost)}}</b><span>presupuesto referencial</span></div>
+        <div><small>{{isBelem ? 'CORREDORES' : 'UBICACIONES CANDIDATAS'}}</small><b>{{hydro.interventions().length}}</b><span>{{isBelem ? totalCells + ' celdas · ' : ''}}{{totalArea}} m²</span></div>
+        <div><small>{{isBelem ? 'ALMACENAMIENTO TOTAL' : 'INVERSIÓN ESTIMADA'}}</small><b>{{isBelem ? totalStorage + ' m³' : formatMillions(totalCost)}}</b><span>{{isBelem ? '49,5 m³ para la red' : 'presupuesto referencial'}}</span></div>
       </section>
 
       <section class="report-section">
@@ -46,12 +46,12 @@ import { HydroService } from '../core/hydro.service';
       </section>
 
       <section class="report-section">
-        <div class="section-title"><div><span class="section-number">3</span><div><h3>Parques recolectores propuestos</h3><p>Ubicaciones priorizadas para captar, retardar e infiltrar agua lluvia.</p></div></div><span class="network-health">Reducción combinada estimada: {{totalReduction}}%</span></div>
+        <div class="section-title"><div><span class="section-number">3</span><div><h3>Bioesponja modular propuesta</h3><p>La misma solución compacta, dimensionada para cada ubicación priorizada.</p></div></div><span class="network-health">Impacto local de referencia: {{totalReduction}}%</span></div>
         <div class="parks-grid">
           @for (park of hydro.interventions(); track park.id; let index = $index) {
             <article class="park-card">
               <div class="park-top"><span>PRIORIDAD {{index + 1}}</span><b>{{park.score}}/100</b></div><h4>{{park.name}}</h4><p>{{parkDescription(index)}}</p>
-              <dl><div><dt>Ubicación</dt><dd>{{park.zone}}</dd></div><div><dt>Coordenadas</dt><dd>{{park.lat.toFixed(4)}}, {{park.lng.toFixed(4)}}</dd></div><div><dt>Superficie</dt><dd>{{park.area}} m²</dd></div><div><dt>Inversión</dt><dd>{{formatCurrency(park.cost)}}</dd></div><div><dt>Reducción de escorrentía</dt><dd>{{park.runoffReduction}}%</dd></div><div><dt>Factibilidad</dt><dd>{{park.feasibility}}%</dd></div></dl>
+              <dl><div><dt>Ubicación</dt><dd>{{park.zone}}</dd></div><div><dt>{{isBelem ? 'Validación' : 'Coordenadas'}}</dt><dd>{{isBelem ? park.validationStatus : park.lat.toFixed(4) + ', ' + park.lng.toFixed(4)}}</dd></div><div><dt>Superficie</dt><dd>{{park.area}} m²</dd></div><div><dt>{{isBelem ? 'Celdas' : 'Inversión'}}</dt><dd>{{isBelem ? park.cells : formatCurrency(park.cost)}}</dd></div><div><dt>{{isBelem ? 'Almacenamiento' : 'Reducción de escorrentía'}}</dt><dd>{{isBelem ? park.storage + ' m³' : park.runoffReduction + '%'}}</dd></div><div><dt>{{isBelem ? 'Módulo / largo' : 'Factibilidad'}}</dt><dd>{{isBelem ? park.moduleType + ' · ' + park.corridorLength + ' m' : park.feasibility + '%'}}</dd></div></dl>
               <div class="park-purpose"><b>Función propuesta</b><span>{{parkPurpose(index)}}</span></div>
             </article>
           }
@@ -63,13 +63,13 @@ import { HydroService } from '../core/hydro.service';
         <div class="roadmap">
           <article><span>0–2 meses</span><h4>Caracterizar y validar</h4><p>Inspeccionar los tramos prioritarios, levantar topografía de detalle y validar disponibilidad de suelo en las tres coordenadas propuestas.</p></article>
           <article><span>2–5 meses</span><h4>Diseñar el piloto prioritario</h4><p>Desarrollar la ingeniería de {{priorityIntervention.name}}: cotas, rebalse seguro, especies adecuadas, pretratamiento de sedimentos, acceso de mantención y conexión con el drenaje.</p></article>
-          <article><span>5–9 meses</span><h4>Construir y validar</h4><p>Ejecutar el parque piloto y contrastar el volumen captado, el tiempo de vaciado y la reducción del caudal punta mediante inspecciones y modelación hidráulica.</p></article>
-          <article><span>9–18 meses</span><h4>Escalar la red verde</h4><p>Con los resultados del piloto, ejecutar las demás alternativas priorizadas. Integrar mantenimiento preventivo, participación vecinal y tablero de seguimiento.</p></article>
+          <article><span>5–9 meses</span><h4>Construir y validar</h4><p>Ejecutar la bioesponja piloto y contrastar el volumen captado, el tiempo de vaciado y la reducción del caudal punta mediante inspecciones y modelación hidráulica.</p></article>
+          <article><span>9–18 meses</span><h4>Escalar la solución</h4><p>Con los resultados del piloto, replicar el mismo módulo en las demás ubicaciones priorizadas. Integrar mantenimiento preventivo, participación vecinal y seguimiento.</p></article>
         </div>
         <div class="success-grid"><div><b>Indicadores de éxito</b><p>Reducción del caudal punta, volumen captado por evento, tiempo de vaciado menor a 24 h y disminución del área expuesta.</p></div><div><b>Operación y mantenimiento</b><p>Inspección antes de lluvias, retiro de sedimentos, revisión de entradas y rebalses, reposición vegetal y control periódico de infiltración.</p></div><div><b>Uso del agua</b><p>El agua retenida puede destinarse al riego de áreas verdes, siempre después de validar su calidad y cumplir la normativa sanitaria y municipal aplicable.</p></div></div>
       </section>
 
-      <p class="disclaimer">Las ubicaciones, costos y resultados son estimaciones territoriales y deben validarse mediante levantamiento topográfico, estudio de suelo, modelación hidráulica y revisión normativa antes de su ejecución.</p>
+      <p class="disclaimer">Diseño conceptual. Deben verificarse en terreno el ancho de las vías, superficie aportante, cotas frente a la marea, profundidad de napa, permeabilidad, intensidad IDF, especies, cobertura de comunicaciones y conexión con el PROMMAF. El informe base no define costos de construcción.</p>
     </article>
 
     @if (printingReport()) {
@@ -77,7 +77,7 @@ import { HydroService } from '../core/hydro.service';
         <section class="print-cover">
           <div class="cover-top"><div class="institutional-brand"><span class="brand-seal">P</span><div><b>POMERAPE</b><small>PLATAFORMA DE GESTIÓN PLUVIAL</small></div></div><span class="document-class">INFORME TÉCNICO INSTITUCIONAL</span></div>
           <div class="cover-rule"></div>
-          <div class="cover-body"><span class="cover-kicker">PLAN INTEGRAL DE RESILIENCIA HÍDRICA</span><h1>Propuesta de gestión y recolección de aguas lluvia</h1><p>Diagnóstico territorial y diseño técnico de parques recolectores para reducir la escorrentía urbana.</p></div>
+          <div class="cover-body"><span class="cover-kicker">PLAN INTEGRAL DE RESILIENCIA HÍDRICA</span><h1>Propuesta de gestión y recolección de aguas lluvia</h1><p>Diagnóstico territorial y dimensionamiento técnico de una bioesponja urbana modular.</p></div>
           <div class="cover-data"><div><small>ÁREA DE ESTUDIO</small><b>{{areaLabel}}</b></div><div><small>CÓDIGO DEL DOCUMENTO</small><b>{{documentCode}}</b></div><div><small>VERSIÓN</small><b>1.0</b></div><div><small>FECHA DE EMISIÓN</small><b>{{hydro.lastUpdated() | date:'dd/MM/yyyy'}}</b></div></div>
           <div class="cover-summary"><span>OBJETIVO DEL DOCUMENTO</span><p>Presentar una solución integrada que vincule pronóstico, topografía, drenaje e infraestructura verde para captar, retardar, infiltrar y reutilizar aguas lluvia.</p></div>
           <div class="cover-footer"><div><small>ELABORADO POR</small><b>Equipo técnico Pomerape</b></div><div><small>ESTADO</small><b>Documento para evaluación institucional</b></div></div>
@@ -86,8 +86,8 @@ import { HydroService } from '../core/hydro.service';
         <section class="print-page">
           <div class="print-page-head"><div><b>POMERAPE</b><span>Informe técnico integral</span></div><span>{{documentCode}} · V1.0</span></div>
           <div class="print-title"><span>01</span><div><small>RESUMEN EJECUTIVO</small><h2>Diagnóstico general y recomendación</h2></div></div>
-          <p class="executive-copy">La solución propuesta articula el análisis de lluvia, topografía y drenaje con tres intervenciones de infraestructura verde. La información disponible identifica a {{priorityIntervention.zone}} como prioridad debido a su escorrentía, la condición de {{prioritySegment.name}} y la concentración de riesgo urbano.</p>
-          <div class="print-kpis"><div><b>{{hydro.zones().length}}</b><span>Zonas evaluadas</span></div><div><b>{{criticalSegments}}</b><span>Tramos prioritarios</span></div><div><b>{{hydro.activeAlerts().length}}</b><span>Incidencias abiertas</span></div><div><b>{{hydro.interventions().length}}</b><span>Parques propuestos</span></div><div><b>{{formatMillions(totalCost)}}</b><span>Inversión estimada</span></div></div>
+          <p class="executive-copy">La solución propuesta articula lluvia, topografía, drenaje y monitoreo. En Belém se plantea una red conceptual de 13 celdas en tres corredores de Pratinha, con 180 m² de bioesponja y 49,5 m³ de almacenamiento estático.</p>
+          <div class="print-kpis"><div><b>{{hydro.zones().length}}</b><span>Corredores</span></div><div><b>{{totalCells}}</b><span>Celdas</span></div><div><b>{{hydro.sensors().length}}</b><span>Instrumentos</span></div><div><b>{{totalArea}} m²</b><span>Superficie</span></div><div><b>{{totalStorage}} m³</b><span>Almacenamiento</span></div></div>
           <div class="institutional-callout"><b>Recomendación institucional</b><p>Priorizar {{priorityIntervention.name}} en conjunto con la inspección de {{prioritySegment.name}}. Esta primera intervención debe utilizarse como piloto medible antes de ampliar la solución hacia los demás sectores.</p></div>
           <div class="print-title compact"><span>02</span><div><small>ANÁLISIS TERRITORIAL</small><h2>Zonas y criterios de priorización</h2></div></div>
           <table><thead><tr><th>Zona</th><th>Riesgo</th><th>Escorrentía</th><th>Drenaje</th><th>Alternativa propuesta</th></tr></thead><tbody>@for (zone of hydro.zones(); track zone.id) {<tr><td><b>{{zone.id}}</b><br>{{zone.name}}</td><td>{{zone.risk}}</td><td>{{zone.runoff}}%</td><td>{{segmentForZone(zone.name)?.condition?.replaceAll('_', ' ') || 'por validar'}}</td><td>{{interventionForZone(zone.name)?.name || 'Evaluación requerida'}}</td></tr>}</tbody></table>
@@ -100,19 +100,19 @@ import { HydroService } from '../core/hydro.service';
           <div class="print-title"><span>03</span><div><small>FUNDAMENTO TÉCNICO</small><h2>Diagnóstico de tramos prioritarios</h2></div></div>
           <p class="section-intro">Los siguientes tramos requieren una acción correctiva o información complementaria antes de cerrar el diagnóstico.</p>
           <table><thead><tr><th>Tramo</th><th>Condición</th><th>Confianza</th><th>Evidencia</th><th>Acción recomendada</th></tr></thead><tbody>@for (segment of relevantSegments; track segment.id) {<tr><td><b>{{segment.id}}</b><br>{{segment.name}}</td><td>{{segment.condition.replaceAll('_', ' ')}}</td><td>{{segment.confidence}}%</td><td>{{segment.evidence}}</td><td>{{segment.suggestedAction}}</td></tr>}</tbody></table>
-          <div class="print-title compact"><span>04</span><div><small>CARTERA DE INTERVENCIONES</small><h2>Parques recolectores propuestos</h2></div></div>
-          <div class="print-parks">@for (park of hydro.interventions(); track park.id; let index = $index) {<article><div class="park-heading"><span>{{index + 1}}</span><div><small>PRIORIDAD {{index + 1}}</small><h3>{{park.name}}</h3></div><b>{{park.score}}/100</b></div><p>{{parkDescription(index)}}</p><dl><div><dt>Ubicación</dt><dd>{{park.zone}}</dd></div><div><dt>Coordenadas</dt><dd>{{park.lat.toFixed(4)}}, {{park.lng.toFixed(4)}}</dd></div><div><dt>Superficie</dt><dd>{{park.area}} m²</dd></div><div><dt>Inversión</dt><dd>{{formatCurrency(park.cost)}}</dd></div><div><dt>Reducción estimada</dt><dd>{{park.runoffReduction}}%</dd></div><div><dt>Factibilidad</dt><dd>{{park.feasibility}}%</dd></div></dl><div class="park-function"><b>Función técnica</b><span>{{parkPurpose(index)}}</span></div></article>}</div>
+          <div class="print-title compact"><span>04</span><div><small>DIMENSIONAMIENTO TERRITORIAL</small><h2>Bioesponjas modulares por ubicación</h2></div></div>
+          <div class="print-parks">@for (park of hydro.interventions(); track park.id; let index = $index) {<article><div class="park-heading"><span>{{index + 1}}</span><div><small>CORREDOR {{index + 1}}</small><h3>{{park.name}}</h3></div><b>{{park.moduleType || park.score}}</b></div><p>{{parkDescription(index)}}</p><dl><div><dt>Ubicación</dt><dd>{{park.zone}}</dd></div><div><dt>Celdas</dt><dd>{{park.cells || '—'}}</dd></div><div><dt>Superficie</dt><dd>{{park.area}} m²</dd></div><div><dt>Largo</dt><dd>{{park.corridorLength || '—'}} m</dd></div><div><dt>Almacenamiento</dt><dd>{{park.storage || '—'}} m³</dd></div><div><dt>Estado</dt><dd>Por validar</dd></div></dl><div class="park-function"><b>Función técnica</b><span>{{parkPurpose(index)}}</span></div></article>}</div>
           <div class="print-page-footer"><span>Pomerape · Informe técnico institucional</span><span>Página 3 de 4</span></div>
         </section>
 
         <section class="print-page last-page">
           <div class="print-page-head"><div><b>POMERAPE</b><span>Informe técnico integral</span></div><span>{{documentCode}} · V1.0</span></div>
           <div class="print-title"><span>05</span><div><small>HOJA DE RUTA</small><h2>Plan de implementación</h2></div></div>
-          <div class="print-roadmap"><article><span>ETAPA 1 · 0–2 MESES</span><h3>Caracterizar y validar</h3><p>Inspeccionar los tramos prioritarios, ejecutar levantamiento topográfico y validar disponibilidad de suelo.</p></article><article><span>ETAPA 2 · 2–5 MESES</span><h3>Diseñar el piloto</h3><p>Preparar ingeniería, permisos, cotas, rebalse seguro, selección vegetal, pretratamiento de sedimentos y acceso de mantención.</p></article><article><span>ETAPA 3 · 5–9 MESES</span><h3>Construir y verificar</h3><p>Ejecutar el parque piloto y contrastar volumen captado, tiempo de vaciado y reducción del caudal punta.</p></article><article><span>ETAPA 4 · 9–18 MESES</span><h3>Evaluar y escalar</h3><p>Validar el desempeño y extender la solución hacia los demás sectores, con mantenimiento preventivo y seguimiento ciudadano.</p></article></div>
+          <div class="print-roadmap"><article><span>ETAPA 1 · 0–2 MESES</span><h3>Caracterizar y validar</h3><p>Medir ancho de vías, topografía, napa, permeabilidad, aportes y cotas frente a la marea.</p></article><article><span>ETAPA 2 · 2–5 MESES</span><h3>Diseñar el piloto</h3><p>Preparar ingeniería, permisos, rebalse, bio-gavión, vegetación, subdrén y conexión al PROMMAF.</p></article><article><span>ETAPA 3 · 5–9 MESES</span><h3>Construir y verificar</h3><p>Ejecutar la bioesponja piloto y contrastar volumen captado, vaciado y calidad operativa.</p></article><article><span>ETAPA 4 · 9–18 MESES</span><h3>Evaluar y escalar</h3><p>Validar el desempeño y completar los tres corredores con mantenimiento comunitario.</p></article></div>
           <div class="print-title compact"><span>06</span><div><small>CONTROL Y SEGUIMIENTO</small><h2>Indicadores institucionales</h2></div></div>
-          <table><thead><tr><th>Indicador</th><th>Meta referencial</th><th>Frecuencia</th><th>Responsable sugerido</th></tr></thead><tbody><tr><td>Reducción del caudal punta</td><td>Validar contra línea base</td><td>Por evento</td><td>Equipo hidráulico</td></tr><tr><td>Tiempo de vaciado del parque</td><td>&lt; 24 horas</td><td>Por evento</td><td>Operación y mantención</td></tr><tr><td>Volumen de agua captada</td><td>Validar por balance hídrico</td><td>Por evento</td><td>Equipo hidráulico</td></tr><tr><td>Superficie inundable</td><td>Tendencia decreciente</td><td>Anual</td><td>Planificación territorial</td></tr><tr><td>Incidencias recurrentes</td><td>Tendencia decreciente</td><td>Trimestral</td><td>Coordinación municipal</td></tr></tbody></table>
+          <table><thead><tr><th>Indicador</th><th>Meta referencial</th><th>Frecuencia</th><th>Responsable sugerido</th></tr></thead><tbody><tr><td>Retención por corredor a 50 mm</td><td>16,5 m³ · 100%</td><td>Por evento</td><td>Equipo hidráulico</td></tr><tr><td>Tiempo de vaciado de lámina</td><td>Objetivo &lt; 12 h; máximo 24 h</td><td>Por evento</td><td>Operación y mantención</td></tr><tr><td>Diferencia entrada / salida</td><td>Diagnóstico automático</td><td>1 min con lluvia</td><td>Equipo de monitoreo</td></tr><tr><td>Sedimento en entrada</td><td>&lt; 10 cm</td><td>Mensual y poslluvia</td><td>Guardiões do Igarapé</td></tr><tr><td>Permeabilidad del medio</td><td>≥ 100 mm/h</td><td>Anual</td><td>Técnico hidráulico</td></tr></tbody></table>
           <div class="approval-grid"><div><small>REVISIÓN TÉCNICA</small><span></span><p>Nombre / cargo / firma</p></div><div><small>APROBACIÓN INSTITUCIONAL</small><span></span><p>Nombre / cargo / firma</p></div></div>
-          <div class="legal-note"><b>Alcance del documento</b><p>Las ubicaciones, costos y resultados se sustentan en información territorial y proyecciones hidrológicas. Requieren levantamiento topográfico, estudio de suelo, modelación hidráulica y revisión ambiental, sanitaria y municipal antes de su ejecución.</p></div>
+          <div class="legal-note"><b>Alcance del documento</b><p>Diseño conceptual sujeto a levantamiento topográfico, estudio de napa y suelo, ensayo de permeabilidad, curvas IDF, coordinación con PROMMAF y presupuesto de ingeniería. Las posiciones del mapa son referenciales.</p></div>
           <div class="print-page-footer"><span>Pomerape · Informe técnico institucional</span><span>Página 4 de 4</span></div>
         </section>
       </article>
@@ -132,21 +132,24 @@ import { HydroService } from '../core/hydro.service';
 export class ReportsComponent {
   readonly printingReport = signal(false);
   constructor(public hydro: HydroService) {}
-  get criticalSegments() { return this.hydro.segments().filter(segment => segment.condition !== 'normal').length; }
-  get relevantSegments() { return this.hydro.segments().filter(segment => segment.condition !== 'normal'); }
+  get isBelem() { return this.hydro.demoArea() === 'belem'; }
+  get criticalSegments() { return this.isBelem ? this.hydro.segments().length : this.hydro.segments().filter(segment => segment.condition !== 'normal').length; }
+  get relevantSegments() { return this.isBelem ? this.hydro.segments() : this.hydro.segments().filter(segment => segment.condition !== 'normal'); }
   get totalArea() { return this.hydro.interventions().reduce((total, item) => total + item.area, 0); }
   get totalCost() { return this.hydro.interventions().reduce((total, item) => total + item.cost, 0); }
-  get totalReduction() { return this.hydro.interventions().reduce((total, item) => total + item.runoffReduction, 0); }
+  get totalCells() { return this.hydro.interventions().reduce((total, item) => total + (item.cells ?? 0), 0); }
+  get totalStorage() { return this.hydro.interventions().reduce((total, item) => total + (item.storage ?? 0), 0); }
+  get totalReduction() { return Math.max(...this.hydro.interventions().map(item => item.runoffReduction), 0); }
   get areaLabel() { return this.hydro.demoArea() === 'talcahuano' ? 'Talcahuano, Región del Biobío' : this.hydro.demoArea() === 'belem' ? 'Belém, Pará, Brasil' : this.hydro.demoArea() === 'quibdo' ? 'Quibdó, Colombia' : 'Arica, Chile'; }
   get documentCode() { return this.hydro.demoArea() === 'talcahuano' ? 'PMR-TH-001' : this.hydro.demoArea() === 'belem' ? 'PMR-BL-001' : this.hydro.demoArea() === 'quibdo' ? 'PMR-QD-001' : 'PMR-AR-001'; }
   get priorityIntervention() { return [...this.hydro.interventions()].sort((a, b) => b.score - a.score)[0]; }
   get prioritySegment() { return [...this.relevantSegments].sort((a, b) => b.confidence - a.confidence)[0] ?? this.hydro.segments()[0]; }
-  segmentForZone(zoneName: string) { const sector = zoneName.replace('Sector ', '').replace(' Sur', ''); return this.hydro.segments().find(segment => segment.sector === sector); }
+  segmentForZone(zoneName: string) { const sector = zoneName.replace('Sector ', '').replace('Corredor ', '').replace(' Sur', ''); return this.hydro.segments().find(segment => segment.sector === sector); }
   interventionForZone(zoneName: string) { return this.hydro.interventions().find(item => item.zone === zoneName); }
   formatCurrency(value: number) { return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(value); }
   formatMillions(value: number) { return '$' + (value / 1_000_000).toFixed(1).replace('.', ',') + ' M'; }
-  parkDescription(index: number) { return ['Parque de captación prioritario junto al sistema central, diseñado para interceptar escorrentía urbana antes de ingresar al colector más exigido.','Corredor verde lineal que recibe aportes del eje Norte, desacelera el flujo y favorece infiltración mediante vegetación y suelo filtrante.','Depresión vegetada de mayor superficie para retener excedentes del sector costero y reducir la presión sobre la descarga final.'][index]; }
-  parkPurpose(index: number) { return ['Captación temprana, filtración de sedimentos, almacenamiento temporal y reutilización para riego del propio parque.','Conducción lenta, infiltración distribuida y conexión segura al drenaje cuando se supera la capacidad de diseño.','Retención de mayor volumen, laminación del caudal punta y creación de un espacio público resiliente.'][index]; }
+  parkDescription(index: number) { return this.isBelem ? ['Tres celdas módulo A de 10 × 2 m para una vía cuyo ancho supuesto es ≥ 5 m.','Cinco celdas módulo B de 10 × 1,2 m instaladas a un solo costado del pasaje.','Cinco celdas módulo B de 10 × 1,2 m; emplazamiento sujeto al levantamiento topográfico.'][index] : ['Configuración prioritaria de bioesponja modular, ubicada antes del punto bajo para interceptar escorrentía urbana.','Configuración del mismo sistema modular ajustada a la superficie disponible y al aporte del sector.','Configuración compacta para almacenar temporalmente excedentes y disminuir la presión sobre el drenaje local.'][index]; }
+  parkPurpose(index: number) { return this.isBelem ? ['Retener 16,5 m³, separar sedimentos en el bio-gavión y descargar por gravedad al colector.','Mantener 60 m² de celda y 16,5 m³ de almacenamiento respetando una franja peatonal ≥ 1,20 m.','Completar la red de 13 celdas y operar con válvula de clapeta frente a la marea.'][index] : ['Captación temprana, filtración, almacenamiento temporal y descarga regulada.','Replicar celdas de 10 × 2 m hasta alcanzar la capacidad requerida por la zona.','Mantener la misma sección constructiva y ajustar únicamente la cantidad de módulos.'][index]; }
   printReport() { this.printingReport.set(true); setTimeout(() => window.print()); }
   @HostListener('window:afterprint') clearPrintReport() { this.printingReport.set(false); }
 }

@@ -15,7 +15,9 @@ export class AppComponent {
   readonly nav=[
     {path:'/dashboard',icon:'⌁',label:'Centro de control'},
     {path:'/mapa',icon:'⌖',label:'Mapa de decisión'},
+    {path:'/red-monitoreo',icon:'◎',label:'Red de monitoreo'},
     {path:'/infraestructura-verde',icon:'♧',label:'Plan de intervención'},
+    {path:'/modelo-bioesponja',icon:'◫',label:'Modelo de bioesponja'},
     {path:'/informes',icon:'¤',label:'Informes'},
   ];
   constructor(public hydro:HydroService){setInterval(()=>this.clock.set(new Date()),30000)}

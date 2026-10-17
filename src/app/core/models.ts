@@ -83,6 +83,11 @@ export interface GreenIntervention {
   lat: number;
   lng: number;
   saved: boolean;
+  moduleType?: 'A' | 'B';
+  cells?: number;
+  storage?: number;
+  corridorLength?: number;
+  validationStatus?: string;
 }
 
 export interface ScenarioResult {

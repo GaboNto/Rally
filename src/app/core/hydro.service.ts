@@ -15,7 +15,7 @@ export class HydroService {
   readonly interventions = signal(structuredClone(BELEM_INTERVENTIONS));
   readonly scenarios = signal(structuredClone(BELEM_SCENARIOS));
   readonly reports = signal(structuredClone(BELEM_REPORTS));
-  readonly selectedSensorId = signal('BL-001');
+  readonly selectedSensorId = signal('BL-RQ-IN');
   readonly simulationMode = signal<SimulationMode>('normal');
   readonly simulationRunning = signal(false);
   readonly lastUpdated = signal(new Date());
@@ -50,7 +50,7 @@ export class HydroService {
     this.interventions.set(structuredClone(belem ? BELEM_INTERVENTIONS : talcahuano ? TALCAHUANO_INTERVENTIONS : DEMO_INTERVENTIONS));
     this.scenarios.set(structuredClone(belem ? BELEM_SCENARIOS : talcahuano ? TALCAHUANO_SCENARIOS : DEMO_SCENARIOS));
     this.reports.set(structuredClone(belem ? BELEM_REPORTS : talcahuano ? TALCAHUANO_REPORTS : DEMO_REPORTS));
-    this.selectedSensorId.set(belem ? 'BL-001' : talcahuano ? 'TH-001' : 'HG-003');
+    this.selectedSensorId.set(belem ? 'BL-RQ-IN' : talcahuano ? 'TH-001' : 'HG-003');
     this.lastUpdated.set(new Date());
   }
 

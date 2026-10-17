@@ -58,16 +58,16 @@ export const DEMO_ALERTS: HydroAlert[] = [
 ];
 
 export const DEMO_INTERVENTIONS: GreenIntervention[] = [
-  { id:'IV-01', name:'Jardín de lluvia Centro', type:'Jardín de lluvia', zone:'Sector Centro', score:87, cost:18500000, area:420, runoffReduction:18, feasibility:82, lat:-18.477, lng:-70.312, saved:true },
-  { id:'IV-02', name:'Biozanja eje Norte', type:'Biozanja vegetada', zone:'Sector Norte', score:79, cost:24600000, area:680, runoffReduction:23, feasibility:74, lat:-18.451, lng:-70.299, saved:false },
-  { id:'IV-03', name:'Biorretención Costera', type:'Área de biorretención', zone:'Sector Costero Sur', score:68, cost:31200000, area:890, runoffReduction:27, feasibility:61, lat:-18.49, lng:-70.317, saved:false },
+  { id:'IV-01', name:'Bioesponja Centro', type:'Bioesponja modular', zone:'Sector Centro', score:87, cost:9600000, area:60, runoffReduction:18, feasibility:82, lat:-18.477, lng:-70.312, saved:true },
+  { id:'IV-02', name:'Bioesponja Norte', type:'Bioesponja modular', zone:'Sector Norte', score:79, cost:12400000, area:80, runoffReduction:23, feasibility:74, lat:-18.451, lng:-70.299, saved:false },
+  { id:'IV-03', name:'Bioesponja Costera', type:'Bioesponja modular', zone:'Sector Costero Sur', score:68, cost:6800000, area:40, runoffReduction:15, feasibility:61, lat:-18.49, lng:-70.317, saved:false },
 ];
 
 export const DEMO_SCENARIOS: ScenarioResult[] = [
   { id:'A', name:'Infraestructura actual', description:'Línea base sin intervenciones.', peakFlow:2.82, runoff:4280, overflow:640, timeToPeak:38, cost:0, area:0, color:'#ff7a59' },
-  { id:'B', name:'Jardín de lluvia', description:'Implementación IV-01 en Sector Centro.', peakFlow:2.39, runoff:3560, overflow:410, timeToPeak:44, cost:18500000, area:420, color:'#27d3b2' },
-  { id:'C', name:'Biozanjas', description:'Implementación IV-02 en eje Norte.', peakFlow:2.27, runoff:3340, overflow:350, timeToPeak:47, cost:24600000, area:680, color:'#48a7ff' },
-  { id:'D', name:'Combinación definida', description:'IV-01 + IV-02 evaluadas como escenario conjunto.', peakFlow:1.96, runoff:2910, overflow:205, timeToPeak:52, cost:43100000, area:1100, color:'#a78bfa' },
+  { id:'B', name:'Bioesponja · 3 celdas', description:'Configuración compacta de 60 m² en Sector Centro.', peakFlow:2.39, runoff:3560, overflow:410, timeToPeak:44, cost:9600000, area:60, color:'#27d3b2' },
+  { id:'C', name:'Bioesponja · 4 celdas', description:'Misma solución ampliada a 80 m².', peakFlow:2.27, runoff:3340, overflow:350, timeToPeak:47, cost:12400000, area:80, color:'#48a7ff' },
+  { id:'D', name:'Bioesponja · 5 celdas', description:'Misma sección constructiva con mayor capacidad.', peakFlow:1.96, runoff:2910, overflow:205, timeToPeak:52, cost:15200000, area:100, color:'#a78bfa' },
 ];
 
 export const DEMO_REPORTS: CommunityReport[] = [
@@ -113,16 +113,16 @@ export const TALCAHUANO_ALERTS: HydroAlert[] = [
 ];
 
 export const TALCAHUANO_INTERVENTIONS: GreenIntervention[] = [
-  { id:'IV-01', name:'Parque de lluvia El Morro', type:'Parque de absorción', zone:'Sector Centro', score:91, cost:31800000, area:620, runoffReduction:24, feasibility:87, lat:-36.7260, lng:-73.1165, saved:true },
-  { id:'IV-02', name:'Biozanja urbana Gaete', type:'Biozanja vegetada', zone:'Sector Gaete', score:84, cost:27400000, area:740, runoffReduction:22, feasibility:79, lat:-36.7400, lng:-73.1115, saved:false },
-  { id:'IV-03', name:'Humedal urbano Perales', type:'Área de biorretención', zone:'Sector Vegas de Perales', score:88, cost:39600000, area:1150, runoffReduction:31, feasibility:82, lat:-36.7590, lng:-73.1000, saved:false },
+  { id:'IV-01', name:'Bioesponja El Morro', type:'Bioesponja modular', zone:'Sector Centro', score:91, cost:12400000, area:80, runoffReduction:24, feasibility:87, lat:-36.7260, lng:-73.1165, saved:true },
+  { id:'IV-02', name:'Bioesponja Gaete', type:'Bioesponja modular', zone:'Sector Gaete', score:84, cost:9600000, area:60, runoffReduction:22, feasibility:79, lat:-36.7400, lng:-73.1115, saved:false },
+  { id:'IV-03', name:'Bioesponja Perales', type:'Bioesponja modular', zone:'Sector Vegas de Perales', score:88, cost:15200000, area:100, runoffReduction:31, feasibility:82, lat:-36.7590, lng:-73.1000, saved:false },
 ];
 
 export const TALCAHUANO_SCENARIOS: ScenarioResult[] = [
   { id:'A', name:'Infraestructura actual', description:'Comportamiento esperado sin nuevas intervenciones.', peakFlow:3.16, runoff:4920, overflow:780, timeToPeak:34, cost:0, area:0, color:'#ff7a59' },
-  { id:'B', name:'Parque El Morro', description:'Captación e infiltración en Sector Centro.', peakFlow:2.54, runoff:3740, overflow:465, timeToPeak:43, cost:31800000, area:620, color:'#27d3b2' },
-  { id:'C', name:'Biozanja Gaete', description:'Conducción verde y retención distribuida en Gaete.', peakFlow:2.61, runoff:3890, overflow:490, timeToPeak:41, cost:27400000, area:740, color:'#48a7ff' },
-  { id:'D', name:'Red integral', description:'Parque El Morro, biozanja Gaete y humedal Perales.', peakFlow:1.92, runoff:2780, overflow:190, timeToPeak:52, cost:98800000, area:2510, color:'#a78bfa' },
+  { id:'B', name:'Bioesponja · 4 celdas', description:'Configuración modular en Sector Centro.', peakFlow:2.54, runoff:3740, overflow:465, timeToPeak:43, cost:12400000, area:80, color:'#27d3b2' },
+  { id:'C', name:'Bioesponja · 3 celdas', description:'Misma solución ajustada al sector Gaete.', peakFlow:2.61, runoff:3890, overflow:490, timeToPeak:41, cost:9600000, area:60, color:'#48a7ff' },
+  { id:'D', name:'Bioesponja · 5 celdas', description:'Misma sección con mayor capacidad en Perales.', peakFlow:1.92, runoff:2780, overflow:190, timeToPeak:52, cost:15200000, area:100, color:'#a78bfa' },
 ];
 
 export const TALCAHUANO_REPORTS: CommunityReport[] = [
@@ -131,57 +131,52 @@ export const TALCAHUANO_REPORTS: CommunityReport[] = [
 ];
 
 export const BELEM_SENSORS: Sensor[] = [
-  sensor('BL-001', 'Canal da Estrada Nova · Entrada', 'Cidade Velha', 'BL-TR-01', 'aguas arriba', -1.4670, -48.5000, 'activo', 88, 100, 4.6, 1.45, 18),
-  sensor('BL-002', 'Canal da Estrada Nova · Saída', 'Cidade Velha', 'BL-TR-01', 'aguas abajo', -1.4690, -48.5030, 'activo', 57, 100, 1.4, .4, 18),
-  sensor('BL-003', 'Canal do Tucunduba · Entrada', 'Terra Firme', 'BL-TR-02', 'aguas arriba', -1.4610, -48.4560, 'activo', 81, 95, 4.1, 1.25, 21),
-  sensor('BL-004', 'Canal do Tucunduba · Saída', 'Terra Firme', 'BL-TR-02', 'aguas abajo', -1.4660, -48.4640, 'activo', 63, 95, 2.2, .65, 21),
-  sensor('BL-005', 'Canal do Una · Entrada', 'Marco', 'BL-TR-03', 'aguas arriba', -1.4370, -48.4690, 'activo', 73, 90, 3.3, 1.05, 16),
-  sensor('BL-006', 'Canal do Una · Saída', 'Marco', 'BL-TR-03', 'aguas abajo', -1.4490, -48.4830, 'activo', 59, 90, 1.8, .55, 16),
-  sensor('BL-007', 'Microdrenagem Jurunas', 'Cidade Velha', 'BL-TR-04', 'aguas arriba', -1.4660, -48.4890, 'mantenimiento', 34, 75, 0),
-  sensor('BL-008', 'Descarga Guamá', 'Terra Firme', 'BL-TR-05', 'aguas abajo', -1.4710, -48.4620, 'desconectado', 0, 90, 0),
+  sensor('BL-RQ-IN', 'Rua Quatro · nivel de entrada', 'Rua Quatro', 'BL-TR-01', 'aguas arriba', -1.3669597, -48.4607986, 'activo', 41, 150, 1.2, .32, 12),
+  sensor('BL-RQ-OUT', 'Rua Quatro · cámara de salida', 'Rua Quatro', 'BL-TR-01', 'aguas abajo', -1.3689057, -48.4607144, 'activo', 18, 200, .4, .12, 12),
+  sensor('BL-SB-IN', 'Passagem São Benedito · nivel de entrada', 'São Benedito', 'BL-TR-02', 'aguas arriba', -1.3759362, -48.4636917, 'activo', 46, 150, 1.5, .38, 12),
+  sensor('BL-SB-OUT', 'Passagem São Benedito · cámara de salida', 'São Benedito', 'BL-TR-02', 'aguas abajo', -1.3783967, -48.4635109, 'activo', 21, 200, .5, .15, 12),
+  sensor('BL-AI-IN', 'Alameda Isabel · nivel de entrada', 'Alameda Isabel', 'BL-TR-03', 'aguas arriba', -1.3620184, -48.4650320, 'activo', 38, 150, 1.1, .29, 12),
+  sensor('BL-AI-OUT', 'Alameda Isabel · cámara de salida', 'Alameda Isabel', 'BL-TR-03', 'aguas abajo', -1.3612158, -48.4644360, 'activo', 16, 200, .3, .1, 12),
+  sensor('BL-RAIN', 'Pluviómetro de balancín · emplazamiento por validar', 'Pratinha', 'BL-TR-01', 'aguas arriba', -1.3698, -48.4622, 'activo', 0, 100, 0, 0, 0),
+  sensor('BL-TIDE', 'Radar de nivel de marea · emplazamiento por validar', 'Mata Fome', 'BL-TR-03', 'aguas abajo', -1.3800, -48.4680, 'activo', 74, 100, .8, .2, 0),
 ];
 
 export const BELEM_SEGMENTS: DrainageSegment[] = [
-  { id:'BL-TR-01', name:'Canal da Estrada Nova', sector:'Cidade Velha', capacity:1.15, sensorIds:['BL-001','BL-002'], coordinates:[[-1.4580,-48.4980],[-1.4615,-48.5000],[-1.4660,-48.5015]], condition:'posible_obstruccion', confidence:91, evidence:'La entrada aumenta con mayor rapidez que la salida durante la precipitación.', suggestedAction:'Inspeccionar residuos y sección hidráulica del canal.' },
-  { id:'BL-TR-02', name:'Canal do Tucunduba', sector:'Terra Firme', capacity:1.05, sensorIds:['BL-003','BL-004'], coordinates:[[-1.4470,-48.4530],[-1.4535,-48.4515],[-1.4620,-48.4490]], condition:'sobrecarga', confidence:88, evidence:'Ocupación elevada en el corredor y tendencia ascendente sostenida.', suggestedAction:'Activar seguimiento continuo y preparar almacenamiento temporal.' },
-  { id:'BL-TR-03', name:'Canal do Una', sector:'Marco', capacity:1.2, sensorIds:['BL-005','BL-006'], coordinates:[[-1.4260,-48.4680],[-1.4350,-48.4650],[-1.4430,-48.4620]], condition:'sobrecarga', confidence:82, evidence:'La capacidad estimada del corredor supera el 80 % de la referencia.', suggestedAction:'Priorizar retención distribuida antes del ingreso al canal.' },
-  { id:'BL-TR-04', name:'Microdrenagem Jurunas', sector:'Cidade Velha', capacity:.76, sensorIds:['BL-007'], coordinates:[[-1.4590,-48.4920],[-1.4630,-48.4950],[-1.4660,-48.4980]], condition:'no_concluyente', confidence:34, evidence:'El punto de control requiere validación en terreno.', suggestedAction:'Realizar inspección en terreno y validar la capacidad.' },
-  { id:'BL-TR-05', name:'Descarga Guamá', sector:'Terra Firme', capacity:1.3, sensorIds:[], coordinates:[[-1.4620,-48.4490],[-1.4670,-48.4470],[-1.4700,-48.4450]], condition:'no_concluyente', confidence:26, evidence:'No se dispone de una validación hidráulica reciente.', suggestedAction:'Inspeccionar y validar el nivel de descarga.' },
+  { id:'BL-TR-01', name:'Corredor Rua Quatro', sector:'Rua Quatro', capacity:.95, sensorIds:['BL-RQ-IN','BL-RQ-OUT'], coordinates:[[-1.3689057,-48.4607144],[-1.3683964,-48.4607457],[-1.3683140,-48.4607562],[-1.3675076,-48.4607842],[-1.3669597,-48.4607986]], condition:'normal', confidence:60, evidence:'Eje vial OSM way 40751463; instrumentación y cotas finas pendientes de levantamiento.', suggestedAction:'Confirmar ancho ≥ 5 m, cotas y punto de conexión al PROMMAF.' },
+  { id:'BL-TR-02', name:'Corredor Passagem São Benedito', sector:'São Benedito', capacity:.95, sensorIds:['BL-SB-IN','BL-SB-OUT'], coordinates:[[-1.3759362,-48.4636917],[-1.3764815,-48.4636756],[-1.3771126,-48.4636137],[-1.3778680,-48.4635686],[-1.3780022,-48.4635419],[-1.3781229,-48.4635258],[-1.3783967,-48.4635109]], condition:'normal', confidence:55, evidence:'Eje vial OSM way 40751536; ancho, napa y cotas finas pendientes.', suggestedAction:'Medir ancho real, napa y cota de descarga antes del diseño ejecutivo.' },
+  { id:'BL-TR-03', name:'Corredor Alameda Isabel', sector:'Alameda Isabel', capacity:.95, sensorIds:['BL-AI-IN','BL-AI-OUT'], coordinates:[[-1.3620184,-48.4650320],[-1.3619946,-48.4645965],[-1.3619864,-48.4645226],[-1.3619730,-48.4644931],[-1.3619247,-48.4644623],[-1.3618255,-48.4644489],[-1.3612158,-48.4644360]], condition:'normal', confidence:55, evidence:'Eje vial OSM way 40760084; topografía detallada y conexión pendientes.', suggestedAction:'Validar topografía, ancho, permeabilidad y conexión al colector.' },
 ];
 
 export const BELEM_ZONES: RiskZone[] = [
-  // Envolventes urbanas contenidas dentro de tierra para la demostración cartográfica.
-  { id:'Z-01', name:'Sector Cidade Velha', risk:'alto', runoff:91, polygon:[[-1.4548,-48.5038],[-1.4545,-48.4972],[-1.4645,-48.4960],[-1.4680,-48.5015],[-1.4630,-48.5042]] },
-  { id:'Z-02', name:'Sector Terra Firme', risk:'alto', runoff:88, polygon:[[-1.4510,-48.4580],[-1.4485,-48.4480],[-1.4625,-48.4435],[-1.4680,-48.4525],[-1.4620,-48.4590]] },
-  { id:'Z-03', name:'Sector Marco', risk:'medio', runoff:72, polygon:[[-1.4240,-48.4695],[-1.4235,-48.4590],[-1.4405,-48.4545],[-1.4460,-48.4635],[-1.4380,-48.4705]] },
+  // Envolventes conceptuales centradas en Pratinha; sus límites requieren levantamiento topográfico.
+  { id:'Z-01', name:'Corredor Rua Quatro', risk:'medio', runoff:90, polygon:[[-1.36908,-48.46098],[-1.36678,-48.46102],[-1.36678,-48.46054],[-1.36908,-48.46050]] },
+  { id:'Z-02', name:'Corredor Passagem São Benedito', risk:'alto', runoff:90, polygon:[[-1.37858,-48.46382],[-1.37576,-48.46396],[-1.37576,-48.46342],[-1.37858,-48.46324]] },
+  { id:'Z-03', name:'Corredor Alameda Isabel', risk:'alto', runoff:90, polygon:[[-1.36220,-48.46520],[-1.36220,-48.46420],[-1.36104,-48.46420],[-1.36104,-48.46520]] },
 ];
 
-export const BELEM_RESERVOIRS: Reservoir[] = [
-  { id:'BL-RP-01', name:'Reservatório Estrada Nova', lat:-1.4640, lng:-48.4970, fill:71, capacity:4200 },
-  { id:'BL-RP-02', name:'Reservatório Tucunduba', lat:-1.4635, lng:-48.4590, fill:63, capacity:5100 },
-];
+export const BELEM_RESERVOIRS: Reservoir[] = [];
 
 export const BELEM_ALERTS: HydroAlert[] = [
-  { id:'BL-AL-301', type:'Posible obstrucción', severity:'critica', location:'Canal da Estrada Nova', relatedId:'BL-TR-01', timestamp:new Date(now-12*60_000).toISOString(), status:'nueva', action:'Inspeccionar la entrada y liberar la sección de paso.' },
-  { id:'BL-AL-300', type:'Canal con capacidad elevada', severity:'alta', location:'Canal do Tucunduba', relatedId:'BL-TR-02', timestamp:new Date(now-22*60_000).toISOString(), status:'confirmada', action:'Mantener monitoreo continuo y preparar respuesta territorial.', assignee:'Equipe hidráulica' },
-  { id:'BL-AL-299', type:'Inspección de descarga pendiente', severity:'media', location:'Descarga Guamá', relatedId:'BL-TR-05', timestamp:new Date(now-49*60_000).toISOString(), status:'asignada', action:'Verificar condición y capacidad de descarga.', assignee:'Equipe Belém' },
+  { id:'BL-AL-301', type:'Prealerta por lluvia de diseño', severity:'alta', location:'Red Pratinha', relatedId:'BL-RAIN', timestamp:new Date(now-12*60_000).toISOString(), status:'nueva', action:'Con lluvia ≥ 30 mm, limpiar rejas y sedimentadores antes del evento.' },
+  { id:'BL-AL-300', type:'Coincidencia lluvia y pleamar', severity:'alta', location:'Canal Mata Fome', relatedId:'BL-TIDE', timestamp:new Date(now-22*60_000).toISOString(), status:'confirmada', action:'Revisar válvulas de clapeta y avisar a los líderes barriales.', assignee:'Guardiões do Igarapé' },
+  { id:'BL-AL-299', type:'Validación topográfica pendiente', severity:'media', location:'Tres corredores de Pratinha', relatedId:'BL-TR-01', timestamp:new Date(now-49*60_000).toISOString(), status:'asignada', action:'Confirmar ancho de vías, cotas de descarga y profundidad de napa.', assignee:'Equipo técnico SESAN' },
 ];
 
 export const BELEM_INTERVENTIONS: GreenIntervention[] = [
-  { id:'IV-01', name:'Parque de chuva Estrada Nova', type:'Parque de absorción', zone:'Sector Cidade Velha', score:93, cost:42000000, area:850, runoffReduction:28, feasibility:88, lat:-1.4632, lng:-48.4993, saved:true },
-  { id:'IV-02', name:'Corredor filtrante Tucunduba', type:'Biozanja vegetada', zone:'Sector Terra Firme', score:90, cost:37600000, area:980, runoffReduction:27, feasibility:85, lat:-1.4585, lng:-48.4510, saved:false },
-  { id:'IV-03', name:'Jardim de retenção Una', type:'Área de biorretención', zone:'Sector Marco', score:84, cost:33500000, area:760, runoffReduction:23, feasibility:80, lat:-1.4360, lng:-48.4630, saved:false },
+  { id:'IV-01', name:'Bioesponja Rua Quatro', type:'Módulo A · 10 × 2 m', zone:'Corredor Rua Quatro', score:78, cost:0, area:60, runoffReduction:100, feasibility:65, lat:-1.36793, lng:-48.46076, saved:true, moduleType:'A', cells:3, storage:16.5, corridorLength:33.5, validationStatus:'Eje vial confirmado; ancho, cotas y conexión por validar' },
+  { id:'IV-02', name:'Bioesponja Passagem São Benedito', type:'Módulo B · 10 × 1,2 m', zone:'Corredor Passagem São Benedito', score:74, cost:0, area:60, runoffReduction:100, feasibility:60, lat:-1.37717, lng:-48.46361, saved:false, moduleType:'B', cells:5, storage:16.5, corridorLength:57, validationStatus:'Eje vial confirmado; ancho, napa y conexión por validar' },
+  { id:'IV-03', name:'Bioesponja Alameda Isabel', type:'Módulo B · 10 × 1,2 m', zone:'Corredor Alameda Isabel', score:74, cost:0, area:60, runoffReduction:100, feasibility:60, lat:-1.36172, lng:-48.46457, saved:false, moduleType:'B', cells:5, storage:16.5, corridorLength:57, validationStatus:'Eje vial confirmado; topografía detallada y conexión por validar' },
 ];
 
 export const BELEM_SCENARIOS: ScenarioResult[] = [
-  { id:'A', name:'Infraestructura actual', description:'Comportamiento esperado sin nuevas intervenciones.', peakFlow:3.72, runoff:5680, overflow:960, timeToPeak:29, cost:0, area:0, color:'#ff7a59' },
-  { id:'B', name:'Parque Estrada Nova', description:'Captación e infiltración en Cidade Velha.', peakFlow:2.81, runoff:4090, overflow:570, timeToPeak:40, cost:42000000, area:850, color:'#27d3b2' },
-  { id:'C', name:'Corredor Tucunduba', description:'Retención lineal y conducción controlada.', peakFlow:2.76, runoff:4140, overflow:545, timeToPeak:42, cost:37600000, area:980, color:'#48a7ff' },
-  { id:'D', name:'Red integral Belém', description:'Aplicación coordinada de las tres intervenciones.', peakFlow:1.98, runoff:2860, overflow:215, timeToPeak:54, cost:113100000, area:2590, color:'#a78bfa' },
+  { id:'A', name:'15 mm · un corredor', description:'Lluvia frecuente; retención estática completa.', peakFlow:.95, runoff:4.95, overflow:0, timeToPeak:90, cost:0, area:60, color:'#27d3b2' },
+  { id:'B', name:'50 mm · lluvia de diseño', description:'16,5 m³ recibidos y almacenados por corredor.', peakFlow:.95, runoff:16.5, overflow:0, timeToPeak:90, cost:0, area:60, color:'#27d3b2' },
+  { id:'C', name:'100 mm · evento superior', description:'50 % retenido; 16,5 m³ excedentes al colector.', peakFlow:.95, runoff:33, overflow:16.5, timeToPeak:90, cost:0, area:60, color:'#48a7ff' },
+  { id:'D', name:'150 mm · evento extremo', description:'33 % retenido; 33 m³ excedentes al colector.', peakFlow:.95, runoff:49.5, overflow:33, timeToPeak:90, cost:0, area:60, color:'#a78bfa' },
 ];
 
 export const BELEM_REPORTS: CommunityReport[] = [
-  { id:'BL-RC-03', category:'Acumulación de agua', location:'Cidade Velha, Belém', description:'Agua acumulada junto a un acceso de microdrenaje.', reporter:'Equipo territorial', status:'inspeccion', createdAt:new Date(now-68*60_000).toISOString(), assignee:'Equipe Belém' },
-  { id:'BL-RC-02', category:'Canal con residuos', location:'Canal da Estrada Nova, Belém', description:'Material visible en la entrada del canal.', reporter:'Inspección municipal', status:'validado', createdAt:new Date(now-145*60_000).toISOString() },
+  { id:'BL-RC-03', category:'Acumulación de agua', location:'Rua Quatro, Pratinha', description:'Antecedente de anegamiento; requiere verificación topográfica y delimitación del aporte.', reporter:'Equipo territorial', status:'inspeccion', createdAt:new Date(now-68*60_000).toISOString(), assignee:'Equipo técnico SESAN' },
+  { id:'BL-RC-02', category:'Sedimento y residuos', location:'Canal Mata Fome, Belém', description:'La solución incorpora reja deflectora y bio-gavión para proteger los colectores.', reporter:'Inspección municipal', status:'validado', createdAt:new Date(now-145*60_000).toISOString() },
 ];
 

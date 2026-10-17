@@ -6,10 +6,9 @@ import { GreenIntervention, RiskLevel, RiskZone } from '../core/models';
 import { HydroMapComponent, SurfaceMode } from '../shared/hydro-map.component';
 
 interface ForecastDay {
-  date: Date;
   label: string;
   rain: number;
-  probability: number;
+  retention: number;
   condition: string;
 }
 
@@ -19,23 +18,23 @@ interface ForecastDay {
   imports: [DatePipe, RouterLink, HydroMapComponent],
   template: `
     <section class="page-head">
-      <div><div class="eyebrow">Centro integrado de análisis</div><h1>Mapa de decisión pluvial</h1><p>Pronóstico, topografía, drenaje e infraestructura verde en un solo flujo.</p></div>
-      <span class="badge amber">Predicción territorial activa</span>
+      <div><div class="eyebrow">Centro integrado de análisis</div><h1>Mapa de decisión pluvial</h1><p>Evento de lluvia, topografía, drenaje e infraestructura verde en un solo flujo.</p></div>
+      <span class="badge amber">Evaluación territorial conceptual</span>
     </section>
 
     <section class="decision-flow" aria-label="Flujo de decisión">
-      <div class="done"><span>1</span><p><b>Pronóstico</b><small>Selecciona el día</small></p></div><i></i>
+      <div class="done"><span>1</span><p><b>Evento de lluvia</b><small>Selecciona la lámina</small></p></div><i></i>
       <div class="done"><span>2</span><p><b>Riesgo territorial</b><small>Cruce con altura y red</small></p></div><i></i>
-      <div [class.done]="selectedParks().length"><span>3</span><p><b>Intervención</b><small>Elige parques</small></p></div><i></i>
+      <div [class.done]="selectedParks().length"><span>3</span><p><b>Intervención</b><small>Configura la bioesponja</small></p></div><i></i>
       <div [class.done]="selectedParks().length"><span>4</span><p><b>Impacto esperado</b><small>Compara el resultado</small></p></div>
     </section>
 
     <section class="forecast card">
-      <div class="forecast-intro"><span class="weather-icon">☔</span><div><small>PRONÓSTICO OPERATIVO</small><h2>¿Qué día quieres evaluar?</h2><p>La probabilidad y la proyección territorial se recalculan con los milímetros previstos.</p></div></div>
+      <div class="forecast-intro"><span class="weather-icon">☔</span><div><small>ESCENARIOS DEL INFORME</small><h2>¿Qué evento quieres evaluar?</h2><p>La proyección usa las láminas de comprobación y la capacidad estática documentada.</p></div></div>
       <div class="forecast-days">
-        @for (day of forecast; track day.date; let index = $index) {
+        @for (day of forecast; track day.label; let index = $index) {
           <button [class.active]="selectedForecastIndex() === index" (click)="selectForecast(index)">
-            <span>{{day.label}}</span><b>{{day.date | date:'dd MMM':'':'es-CL'}}</b><strong>{{day.rain}} mm</strong><small>{{day.probability}}% · {{day.condition}}</small>
+            <span>{{day.label}}</span><b>{{day.condition}}</b><strong>{{day.rain}} mm</strong><small>{{day.retention}}% retenido por corredor</small>
           </button>
         }
       </div>
@@ -44,10 +43,10 @@ interface ForecastDay {
     <section class="analysis-grid">
       <article class="card map-card">
         <div class="map-toolbar">
-          <div><small>ESCENARIO ANALIZADO</small><b>{{activeForecast().label}}, {{activeForecast().date | date:'dd MMMM':'':'es-CL'}} · {{activeForecast().rain}} mm</b></div>
+          <div><small>ESCENARIO ANALIZADO</small><b>{{activeForecast().label}} · {{activeForecast().rain}} mm/24 h</b></div>
           <div class="map-controls">
-            <div class="segmented"><button [class.active]="surfaceMode()==='susceptibility'" (click)="surfaceMode.set('susceptibility')">Riesgo</button><button [class.active]="surfaceMode()==='elevation'" (click)="surfaceMode.set('elevation')">Altura</button></div>
-            <div class="segmented compare"><button [class.active]="viewMode()==='before'" (click)="viewMode.set('before')">Actual</button><button [class.active]="viewMode()==='after'" [disabled]="!selectedParks().length" (click)="viewMode.set('after')">Con parques</button></div>
+            <div class="segmented"><button [class.active]="surfaceMode()==='susceptibility'" (click)="surfaceMode.set('susceptibility')">{{hydro.demoArea()==='belem' ? 'Prioridad' : 'Riesgo'}}</button><button [class.active]="surfaceMode()==='elevation'" (click)="surfaceMode.set('elevation')">Elevación</button></div>
+            <div class="segmented compare"><button [class.active]="viewMode()==='before'" (click)="viewMode.set('before')">Actual</button><button [class.active]="viewMode()==='after'" [disabled]="!selectedParks().length" (click)="viewMode.set('after')">Con bioesponja</button></div>
           </div>
         </div>
         <div class="map-holder">
@@ -57,14 +56,20 @@ interface ForecastDay {
             [selectedZoneId]="selectedZone().id" [selectedInterventionIds]="selectedParks()" [showRiskSurface]="true" [surfaceMode]="surfaceMode()"
             [riskOpacity]="surfaceMode()==='susceptibility'?0.24:0.08" [decisionMode]="true" [rainfall]="activeForecast().rain" [comparisonMode]="viewMode()" [demoArea]="hydro.demoArea()"
             (zoneSelected)="selectZone($event)" (interventionSelected)="togglePark($event)" />
-          <div class="map-story"><span><i class="water"></i>Profundidad proyectada</span><span><i class="flow"></i>Ruta de escurrimiento</span><span><i class="park"></i>Parque de absorción</span><span><i class="risk"></i>Zona prioritaria</span></div>
-          <div class="map-caption">Altura del terreno + {{activeForecast().rain}} mm · profundidad recalculada</div>
+          <div class="map-story">
+            @if(hydro.demoArea()==='belem'){
+              <span><i class="water"></i>Cota DEM 90 m</span><span><i class="flow"></i>Eje vial OSM</span><span><i class="park"></i>Bioesponja propuesta</span><span><i class="risk"></i>Corredor preliminar</span>
+            } @else {
+              <span><i class="water"></i>Profundidad proyectada</span><span><i class="flow"></i>Ruta de escurrimiento</span><span><i class="park"></i>Ubicación de bioesponja</span><span><i class="risk"></i>Zona prioritaria</span>
+            }
+          </div>
+          <div class="map-caption">{{hydro.demoArea()==='belem' ? 'Elevación real DEM 90 m · ejes viales OSM · límites hidráulicos pendientes de levantamiento' : 'Altura del terreno + ' + activeForecast().rain + ' mm · profundidad recalculada'}}</div>
         </div>
       </article>
 
       <aside class="decision-panel card">
         <div class="panel-head"><div><small>ZONA SELECCIONADA</small><h2>{{selectedZone().name}}</h2></div><span class="risk-badge {{selectedRisk()}}">{{riskLabel(selectedRisk())}}</span></div>
-        <div class="rain-alert" [class.critical]="selectedRiskScore() >= 68"><span>!</span><div><b>{{riskMessage()}}</b><p>{{activeForecast().rain}} mm previstos · análisis basado en altura, escorrentía y capacidad de drenaje.</p></div></div>
+        <div class="rain-alert" [class.critical]="selectedRiskScore() >= 68"><span>!</span><div><b>{{riskMessage()}}</b><p>Evento de {{activeForecast().rain}} mm · análisis preliminar basado en elevación, escorrentía y capacidad de drenaje.</p></div></div>
         <div class="integrated-risk">
           <div class="integrated-head"><div><small>RIESGO INTEGRADO</small><b>{{selectedRiskScore()}}/100</b></div><span>Modelo territorial</span></div>
           <div class="risk-factor"><span>Topografía <b>45%</b></span><i><em [style.width.%]="topographyScore(selectedZone())"></em></i></div>
@@ -79,9 +84,9 @@ interface ForecastDay {
         </div>
         <div class="recommendation">
           <small>SOLUCIÓN RECOMENDADA</small><h3>{{recommendedPark().name}}</h3><p>{{recommendedPark().type}} de {{recommendedPark().area}} m² en {{recommendedPark().zone}}.</p>
-          <div class="recommendation-stats"><span><b>{{recommendedPark().runoffReduction}}%</b> reducción</span><span><b>{{recommendedPark().feasibility}}%</b> factibilidad</span><span><b>{{formatMillions(recommendedPark().cost)}}</b> inversión</span></div>
+          <div class="recommendation-stats"><span><b>{{recommendedPark().runoffReduction}}%</b> retención a 50 mm</span><span><b>{{recommendedPark().storage || '—'}} m³</b> almacenamiento</span><span><b>{{recommendedPark().cost ? formatMillions(recommendedPark().cost) : 'Pendiente'}}</b> presupuesto</span></div>
           <div class="recommendation-actions">
-            <button class="btn ghost" (click)="togglePark(recommendedPark().id)">{{isParkSelected(recommendedPark().id) ? 'Quitar selección' : 'Añadir a comparación'}}</button>
+            <button class="btn ghost" (click)="togglePark(recommendedPark().id)">{{isParkSelected(recommendedPark().id) ? 'Quitar ubicación' : 'Comparar en esta zona'}}</button>
             <a class="btn primary" routerLink="/infraestructura-verde" [queryParams]="{ zone: selectedZone().id, rain: activeForecast().rain, forecast: selectedForecastIndex(), intervention: recommendedPark().id }">Diseñar solución →</a>
           </div>
         </div>
@@ -89,7 +94,7 @@ interface ForecastDay {
     </section>
 
     <section class="impact card">
-      <div class="impact-head"><div><div class="eyebrow">Comparación del escenario</div><h2>Impacto estimado de la decisión</h2><p>{{selectedParks().length ? selectedParks().length + ' intervención(es) incluidas en el plan.' : 'Selecciona al menos un parque para calcular el escenario intervenido.'}}</p></div><div class="impact-actions"><button class="btn ghost" (click)="clearPlan()" [disabled]="!selectedParks().length">Limpiar</button><button class="btn primary" (click)="savePlan()" [disabled]="!selectedParks().length">Guardar plan local</button></div></div>
+      <div class="impact-head"><div><div class="eyebrow">Comparación del escenario</div><h2>Impacto estimado de la decisión</h2><p>{{selectedParks().length ? 'Bioesponja evaluada en ' + recommendedPark().zone + '.' : 'Selecciona una ubicación para calcular el escenario intervenido.'}}</p></div><div class="impact-actions"><button class="btn ghost" (click)="clearPlan()" [disabled]="!selectedParks().length">Limpiar</button><button class="btn primary" (click)="savePlan()" [disabled]="!selectedParks().length">Guardar plan local</button></div></div>
       <div class="comparison">
         <div class="comparison-label"><span>INDICADOR</span><b>Situación actual</b><strong>Con intervención</strong></div>
         <div><span>Agua acumulada</span><b>{{estimatedWater()}} m³</b><strong>{{projectedWater()}} m³ <em>−{{waterSaved()}} m³</em></strong></div>
@@ -100,14 +105,14 @@ interface ForecastDay {
       @if (savedAt()) { <div class="saved-message">✓ Plan guardado en este dispositivo a las {{savedAt() | date:'HH:mm'}}. No se envió información a un servidor.</div> }
     </section>
 
-    <section class="portfolio-head"><div><div class="eyebrow">Cartera local de soluciones</div><h2>Parques de absorción disponibles</h2></div><span>{{selectedParks().length}} seleccionados</span></section>
+    <section class="portfolio-head"><div><div class="eyebrow">Ubicaciones candidatas</div><h2>La misma bioesponja, dimensionada para cada zona</h2></div><span>{{selectedParks().length ? '1 ubicación en evaluación' : 'Selecciona una zona'}}</span></section>
     <section class="park-grid">
       @for (park of decisionInterventions(); track park.id; let index = $index) {
         <article class="card park-option" [class.selected]="isParkSelected(park.id)">
           <div class="park-option-head"><span>0{{index + 1}}</span><div><small>{{park.type}}</small><h3>{{park.name}}</h3></div><b>{{park.score}}/100</b></div>
-          <p>{{park.zone}} · {{park.lat.toFixed(4)}}, {{park.lng.toFixed(4)}}</p>
+          <p>{{park.zone}} · {{hydro.demoArea()==='belem' ? (park.validationStatus || 'Emplazamiento por validar') : park.lat.toFixed(4) + ', ' + park.lng.toFixed(4)}}</p>
           <div class="park-metrics"><span><small>SUPERFICIE</small><b>{{park.area}} m²</b></span><span><small>REDUCCIÓN</small><b>{{park.runoffReduction}}%</b></span><span><small>FACTIBILIDAD</small><b>{{park.feasibility}}%</b></span></div>
-          <button class="btn" [class.primary]="!isParkSelected(park.id)" (click)="togglePark(park.id)">{{isParkSelected(park.id) ? 'Incluido en el plan ✓' : 'Evaluar esta intervención'}}</button>
+          <button class="btn" [class.primary]="!isParkSelected(park.id)" (click)="togglePark(park.id)">{{isParkSelected(park.id) ? 'Ubicación seleccionada ✓' : 'Evaluar en esta zona'}}</button>
         </article>
       }
     </section>
@@ -120,21 +125,23 @@ interface ForecastDay {
     .map-story .grate{border:2px solid #59ded2;background:repeating-linear-gradient(90deg,#0d3039 0 2px,#59ded2 2px 3px)}
     .grate-detail{width:100%;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:9px;padding:10px 11px;margin:0 0 12px;text-align:left;color:inherit;background:#0b2933;border:1px solid #24505a;border-radius:9px;cursor:pointer}.grate-symbol{width:27px;height:27px;border-radius:7px;display:grid;place-items:center;background:#123e46;color:#58ddd2}.grate-detail small,.grate-detail b{display:block}.grate-detail small{font-size:6px;letter-spacing:.9px;color:#5fcfc6}.grate-detail b{font-size:9px;margin:2px 0}.grate-detail p{font-size:7px;color:#7a939b;margin:0}.grate-detail>strong{font-size:7px;text-transform:uppercase;padding:5px 7px;border-radius:12px;color:#55dbad;background:#12372f}.grate-detail>strong.atencion{color:#f6ca70;background:#3a2f1d}.grate-detail>strong.obstruida{color:#ff8c84;background:#3b2024}.operating-systems{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.system-card{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:13px;padding:17px;border-top:2px solid #36d4c9}.system-card.intervention{border-top-color:#55d79c}.system-number{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:#113843;color:#57ddd2;font-weight:800}.system-copy small{font-size:7px;letter-spacing:1px;color:#52d6cc}.system-copy h2{font-size:14px;margin:3px 0 5px}.system-copy p{max-width:650px;font-size:8px;line-height:1.55;color:#78929b;margin:0}.system-copy p b{color:#c3d8dc}.system-kpis{display:flex;gap:7px}.system-kpis span{min-width:76px;padding:9px;background:#0b2731;border-radius:8px;color:#6f8992;font-size:7px}.system-kpis b{display:block;color:#d5e6e8;font-size:14px;margin-bottom:2px}.system-kpis .warning b{color:#f4c163}.design-note{grid-column:1/-1;margin:0;padding:8px 12px;border-left:3px solid #4ca6c8;background:#0b202a;color:#77909a;font-size:8px}
     @media(max-width:1200px){.analysis-grid{grid-template-columns:1fr}.decision-panel{display:grid;grid-template-columns:1fr 1fr;gap:14px}.panel-head,.rain-alert{grid-column:1/-1}.forecast{grid-template-columns:1fr}.forecast-intro{border-right:0;border-bottom:1px solid var(--line);padding:0 0 12px}.comparison{grid-template-columns:1fr 1fr 1fr}.comparison-label{display:none!important}.park-grid{grid-template-columns:1fr 1fr}.operating-systems{grid-template-columns:1fr}}@media(max-width:720px){.decision-flow{grid-template-columns:1fr 1fr;gap:8px}.decision-flow i{display:none}.forecast-days{grid-template-columns:repeat(2,1fr)}.analysis-grid{display:block}.decision-panel{display:block;margin-top:12px}.map-toolbar{height:auto;padding:12px;align-items:flex-start;gap:10px;flex-direction:column}.map-holder{height:500px}.map-controls{width:100%}.segmented{flex:1}.segmented button{flex:1}.map-caption{display:none}.comparison{grid-template-columns:1fr}.comparison>div{border-left:0;border-top:1px solid var(--line)}.impact-head,.next-step{align-items:stretch;flex-direction:column;gap:12px}.park-grid{grid-template-columns:1fr}.recommendation-actions{grid-template-columns:1fr}.system-card{grid-template-columns:36px 1fr}.system-kpis{grid-column:1/-1;flex-wrap:wrap}}
+    .forecast-days{grid-template-columns:repeat(4,1fr)}
   `],
 })
 export class GeoMapPageComponent {
   readonly surfaceMode = signal<SurfaceMode>('susceptibility');
-  readonly selectedForecastIndex = signal(2);
+  readonly selectedForecastIndex = signal(1);
   readonly selectedZoneId = signal('Z-01');
   readonly selectedParks = signal<string[]>(this.loadSavedParks());
   readonly viewMode = signal<'before' | 'after'>(this.selectedParks().length ? 'after' : 'before');
   readonly savedAt = signal<Date | null>(null);
 
-  readonly forecast: ForecastDay[] = [2, 8, 38, 24, 6].map((rain, index) => {
-    const date = this.addDays(index);
-    const label = index === 0 ? 'Hoy' : index === 1 ? 'Mañana' : date.toLocaleDateString('es-CL', { weekday: 'long' });
-    return { date, label, rain, probability: this.probabilityForRain(rain), condition: this.conditionForRain(rain) };
-  });
+  readonly forecast: ForecastDay[] = [
+    { label: 'Evento frecuente', rain: 15, retention: 100, condition: 'Comprobación estática' },
+    { label: 'Evento de diseño', rain: 50, retention: 100, condition: 'Base del anteproyecto' },
+    { label: 'Evento superior', rain: 100, retention: 50, condition: 'Con excedencia' },
+    { label: 'Evento extremo', rain: 150, retention: 33, condition: 'Con excedencia alta' },
+  ];
 
   private readonly quibdoZones: RiskZone[] = [
     { id: 'QZ-01', name: 'Sector Centro', risk: 'alto', runoff: 88, polygon: [[5.681,-76.663],[5.681,-76.652],[5.692,-76.652],[5.692,-76.664]] },
@@ -142,9 +149,9 @@ export class GeoMapPageComponent {
     { id: 'QZ-03', name: 'Sector Ribera', risk: 'alto', runoff: 91, polygon: [[5.665,-76.676],[5.666,-76.663],[5.679,-76.661],[5.679,-76.676]] },
   ];
   private readonly quibdoInterventions: GreenIntervention[] = [
-    { id:'QV-01', name:'Parque de lluvia Centro', type:'Jardín de lluvia', zone:'Sector Centro', score:89, cost:22500000, area:510, runoffReduction:21, feasibility:84, lat:5.687, lng:-76.658, saved:false },
-    { id:'QV-02', name:'Corredor filtrante Norte', type:'Biozanja vegetada', zone:'Sector Norte', score:82, cost:27800000, area:740, runoffReduction:25, feasibility:77, lat:5.701, lng:-76.659, saved:false },
-    { id:'QV-03', name:'Humedal urbano de ribera', type:'Biorretención', zone:'Sector Ribera', score:86, cost:36400000, area:960, runoffReduction:31, feasibility:72, lat:5.672, lng:-76.669, saved:false },
+    { id:'QV-01', name:'Bioesponja Centro', type:'Bioesponja modular', zone:'Sector Centro', score:89, cost:9600000, area:60, runoffReduction:21, feasibility:84, lat:5.687, lng:-76.658, saved:false },
+    { id:'QV-02', name:'Bioesponja Norte', type:'Bioesponja modular', zone:'Sector Norte', score:82, cost:12400000, area:80, runoffReduction:25, feasibility:77, lat:5.701, lng:-76.659, saved:false },
+    { id:'QV-03', name:'Bioesponja Ribera', type:'Bioesponja modular', zone:'Sector Ribera', score:86, cost:15200000, area:100, runoffReduction:31, feasibility:72, lat:5.672, lng:-76.669, saved:false },
   ];
 
   readonly activeForecast = computed(() => this.forecast[this.selectedForecastIndex()]);
@@ -154,10 +161,15 @@ export class GeoMapPageComponent {
   readonly selectedRiskScore = computed(() => this.integratedRiskScore(this.selectedZone()));
   readonly selectedRisk = computed(() => this.calculatedRisk(this.selectedZone()));
   readonly recommendedPark = computed(() => this.decisionInterventions().find(park => park.zone === this.selectedZone().name) ?? this.decisionInterventions()[0]);
-  readonly impactReduction = computed(() => Math.min(65, this.decisionInterventions().filter(park => this.selectedParks().includes(park.id)).reduce((sum, park) => sum + park.runoffReduction, 0)));
+  readonly impactReduction = computed(() => {
+    const selected = this.decisionInterventions().find(park => this.selectedParks().includes(park.id));
+    if (!selected) return 0;
+    if (this.hydro.demoArea() === 'belem') return Math.min(100, Math.round((selected.storage ?? 16.5) / Math.max(.1, this.estimatedWater()) * 100));
+    return Math.min(65, selected.runoffReduction);
+  });
   readonly displayZones = computed(() => this.decisionZones().map(zone => ({ ...zone, risk: this.calculatedRisk(zone) })));
-  readonly estimatedWater = computed(() => Math.round(this.activeForecast().rain * (8 + this.selectedZone().runoff / 6)));
-  readonly projectedWater = computed(() => Math.round(this.estimatedWater() * (1 - this.impactReduction() / 100)));
+  readonly estimatedWater = computed(() => this.hydro.demoArea() === 'belem' ? +(this.activeForecast().rain / 1000 * (300 * .9 + 60)).toFixed(1) : Math.round(this.activeForecast().rain * (8 + this.selectedZone().runoff / 6)));
+  readonly projectedWater = computed(() => +(this.estimatedWater() * (1 - this.impactReduction() / 100)).toFixed(1));
   readonly waterSaved = computed(() => this.estimatedWater() - this.projectedWater());
   readonly estimatedDepth = computed(() => this.depthForZone(this.selectedZone()));
   readonly projectedDepth = computed(() => Math.max(0, Math.round(this.estimatedDepth() * (1 - this.impactReduction() / 100))));
@@ -174,7 +186,7 @@ export class GeoMapPageComponent {
   selectZone(id: string) { this.selectedZoneId.set(id); }
   isParkSelected(id: string) { return this.selectedParks().includes(id); }
   togglePark(id: string) {
-    this.selectedParks.update(ids => ids.includes(id) ? ids.filter(item => item !== id) : [...ids, id]);
+    this.selectedParks.update(ids => ids.includes(id) ? [] : [id]);
     this.viewMode.set(this.selectedParks().length ? 'after' : 'before');
     this.savedAt.set(null);
   }
@@ -200,8 +212,6 @@ export class GeoMapPageComponent {
     return segment ? `${segment.name}: ${segment.condition.replaceAll('_', ' ')} (${segment.confidence}% de confianza).` : 'Sin anomalías relevantes vinculadas.';
   }
   formatMillions(value: number) { return '$' + (value / 1_000_000).toFixed(1).replace('.', ',') + ' M'; }
-  probabilityForRain(rain: number) { return Math.min(98, Math.round(8 + 92 * (1 - Math.exp(-rain / 18)))); }
-  conditionForRain(rain: number) { return rain >= 30 ? 'Intensa' : rain >= 18 ? 'Fuerte' : rain >= 7 ? 'Moderada' : rain > 0 ? 'Débil' : 'Sin lluvia'; }
 
   private integratedRiskScore(zone: RiskZone) {
     let score = this.topographyScore(zone) * .45 + this.rainScore() * .35 + this.drainageScore(zone) * .20;
@@ -223,9 +233,11 @@ export class GeoMapPageComponent {
     const drainagePressure = Math.max(0, this.drainageScore(zone) - 45) / 220;
     return Math.max(0, Math.round(rain * (zone.runoff / 100) * .52 * (1 + drainagePressure)));
   }
-  private addDays(days: number) { const date = new Date(); date.setHours(12, 0, 0, 0); date.setDate(date.getDate() + days); return date; }
   private loadSavedParks(): string[] {
-    try { return JSON.parse(localStorage.getItem('pomerape-decision-plan') || '{}').parks || []; }
+    try {
+      const parks = JSON.parse(localStorage.getItem('pomerape-decision-plan') || '{}').parks || [];
+      return parks.length ? [parks[0]] : [];
+    }
     catch { return []; }
   }
 }
