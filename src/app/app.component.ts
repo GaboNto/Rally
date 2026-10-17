@@ -12,7 +12,12 @@ import { DemoArea, HydroService } from './core/hydro.service';
 })
 export class AppComponent {
   readonly menuOpen=signal(false);readonly clock=signal(new Date());readonly activeAlerts=computed(()=>this.hydro.activeAlerts().length);
-  readonly nav=[{path:'/dashboard',icon:'⌁',label:'Centro de control'},{path:'/mapa',icon:'⌖',label:'Mapa geoespacial'},{path:'/lluvia',icon:'☔',label:'Mapa de lluvia'},{path:'/mission-control',icon:'🚨',label:'Mission Control'},{path:'/sensores',icon:'◉',label:'Sensores IoT'},{path:'/diagnosticos',icon:'◇',label:'Diagnosticos'},{path:'/infraestructura-verde',icon:'♧',label:'Infraestructura verde'},{path:'/alertas',icon:'!',label:'Alertas'},{path:'/informes',icon:'¤',label:'Informes'}];
+  readonly nav=[
+    {path:'/dashboard',icon:'⌁',label:'Centro de control'},
+    {path:'/mapa',icon:'⌖',label:'Mapa de decisión'},
+    {path:'/infraestructura-verde',icon:'♧',label:'Plan de intervención'},
+    {path:'/informes',icon:'¤',label:'Informes'},
+  ];
   constructor(public hydro:HydroService){setInterval(()=>this.clock.set(new Date()),30000)}
   changeDemoArea(event: Event) { this.hydro.setDemoArea((event.target as HTMLSelectElement).value as DemoArea); }
 }

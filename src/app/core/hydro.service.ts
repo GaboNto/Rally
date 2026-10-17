@@ -1,21 +1,21 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { DEMO_ALERTS, DEMO_INTERVENTIONS, DEMO_REPORTS, DEMO_RESERVOIRS, DEMO_SCENARIOS, DEMO_SEGMENTS, DEMO_SENSORS, DEMO_ZONES } from './demo-data';
+import { BELEM_ALERTS, BELEM_INTERVENTIONS, BELEM_REPORTS, BELEM_RESERVOIRS, BELEM_SCENARIOS, BELEM_SEGMENTS, BELEM_SENSORS, BELEM_ZONES, DEMO_ALERTS, DEMO_INTERVENTIONS, DEMO_REPORTS, DEMO_RESERVOIRS, DEMO_SCENARIOS, DEMO_SEGMENTS, DEMO_SENSORS, DEMO_ZONES, TALCAHUANO_ALERTS, TALCAHUANO_INTERVENTIONS, TALCAHUANO_REPORTS, TALCAHUANO_RESERVOIRS, TALCAHUANO_SCENARIOS, TALCAHUANO_SEGMENTS, TALCAHUANO_SENSORS, TALCAHUANO_ZONES } from './demo-data';
 import { AlertStatus, CommunityReport, SimulationMode } from './models';
 
-export type DemoArea = 'arica' | 'quibdo';
+export type DemoArea = 'arica' | 'quibdo' | 'talcahuano' | 'belem';
 
 @Injectable({ providedIn: 'root' })
 export class HydroService {
-  readonly demoArea = signal<DemoArea>('arica');
-  readonly sensors = signal(structuredClone(DEMO_SENSORS));
-  readonly segments = signal(structuredClone(DEMO_SEGMENTS));
-  readonly zones = signal(structuredClone(DEMO_ZONES));
-  readonly reservoirs = signal(structuredClone(DEMO_RESERVOIRS));
-  readonly alerts = signal(structuredClone(DEMO_ALERTS));
-  readonly interventions = signal(structuredClone(DEMO_INTERVENTIONS));
-  readonly scenarios = signal(structuredClone(DEMO_SCENARIOS));
-  readonly reports = signal(structuredClone(DEMO_REPORTS));
-  readonly selectedSensorId = signal('HG-003');
+  readonly demoArea = signal<DemoArea>('belem');
+  readonly sensors = signal(structuredClone(BELEM_SENSORS));
+  readonly segments = signal(structuredClone(BELEM_SEGMENTS));
+  readonly zones = signal(structuredClone(BELEM_ZONES));
+  readonly reservoirs = signal(structuredClone(BELEM_RESERVOIRS));
+  readonly alerts = signal(structuredClone(BELEM_ALERTS));
+  readonly interventions = signal(structuredClone(BELEM_INTERVENTIONS));
+  readonly scenarios = signal(structuredClone(BELEM_SCENARIOS));
+  readonly reports = signal(structuredClone(BELEM_REPORTS));
+  readonly selectedSensorId = signal('BL-001');
   readonly simulationMode = signal<SimulationMode>('normal');
   readonly simulationRunning = signal(false);
   readonly lastUpdated = signal(new Date());
@@ -38,7 +38,21 @@ export class HydroService {
   });
 
   selectSensor(id: string) { this.selectedSensorId.set(id); }
-  setDemoArea(area: DemoArea) { this.demoArea.set(area); }
+  setDemoArea(area: DemoArea) {
+    this.demoArea.set(area);
+    const talcahuano = area === 'talcahuano';
+    const belem = area === 'belem';
+    this.sensors.set(structuredClone(belem ? BELEM_SENSORS : talcahuano ? TALCAHUANO_SENSORS : DEMO_SENSORS));
+    this.segments.set(structuredClone(belem ? BELEM_SEGMENTS : talcahuano ? TALCAHUANO_SEGMENTS : DEMO_SEGMENTS));
+    this.zones.set(structuredClone(belem ? BELEM_ZONES : talcahuano ? TALCAHUANO_ZONES : DEMO_ZONES));
+    this.reservoirs.set(structuredClone(belem ? BELEM_RESERVOIRS : talcahuano ? TALCAHUANO_RESERVOIRS : DEMO_RESERVOIRS));
+    this.alerts.set(structuredClone(belem ? BELEM_ALERTS : talcahuano ? TALCAHUANO_ALERTS : DEMO_ALERTS));
+    this.interventions.set(structuredClone(belem ? BELEM_INTERVENTIONS : talcahuano ? TALCAHUANO_INTERVENTIONS : DEMO_INTERVENTIONS));
+    this.scenarios.set(structuredClone(belem ? BELEM_SCENARIOS : talcahuano ? TALCAHUANO_SCENARIOS : DEMO_SCENARIOS));
+    this.reports.set(structuredClone(belem ? BELEM_REPORTS : talcahuano ? TALCAHUANO_REPORTS : DEMO_REPORTS));
+    this.selectedSensorId.set(belem ? 'BL-001' : talcahuano ? 'TH-001' : 'HG-003');
+    this.lastUpdated.set(new Date());
+  }
 
   setSimulation(mode: SimulationMode, running: boolean) {
     this.simulationMode.set(mode);

@@ -25,6 +25,7 @@ export interface Sensor {
   variation: number;
   lastReading: string;
   readings: Reading[];
+  assetType?: 'rejilla_drenaje';
 }
 
 export interface DrainageSegment {

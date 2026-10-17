@@ -1,4 +1,4 @@
-# HydroGuard
+# Pomerape
 
 Prototipo funcional de una plataforma inteligente de monitoreo y apoyo a la planificación del drenaje pluvial. Fue construido con Angular 19, Leaflet, OpenStreetMap y Apache ECharts.
 
@@ -54,4 +54,4 @@ Los servicios se diseñaron para poder reemplazar el estado local por APIs REST,
 
 En **Mapa geoespacial → Fuente externa**, selecciona el formato e ingresa la URL pública del servicio. Para WMS también se requiere el identificador exacto de la capa. El servidor de origen debe permitir solicitudes CORS desde la aplicación.
 
-Los GeoJSON pueden usar una propiedad `risk` o `riesgo` con valores `alto`, `medio` o `bajo`; HydroGuard aplica automáticamente la escala roja, amarilla y verde.
+Los GeoJSON pueden usar una propiedad `risk` o `riesgo` con valores `alto`, `medio` o `bajo`; Pomerape aplica automáticamente la escala roja, amarilla y verde.
