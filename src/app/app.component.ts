@@ -1,7 +1,7 @@
 import { Component, computed, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { DemoArea, HydroService } from './core/hydro.service';
+import { HydroService } from './core/hydro.service';
 
 @Component({
   selector: 'app-root',
@@ -21,5 +21,4 @@ export class AppComponent {
     {path:'/informes',icon:'¤',label:'Informes'},
   ];
   constructor(public hydro:HydroService){setInterval(()=>this.clock.set(new Date()),30000)}
-  changeDemoArea(event: Event) { this.hydro.setDemoArea((event.target as HTMLSelectElement).value as DemoArea); }
 }

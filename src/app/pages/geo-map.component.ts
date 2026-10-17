@@ -19,7 +19,7 @@ interface ForecastDay {
   template: `
     <section class="page-head">
       <div><div class="eyebrow">Centro integrado de análisis</div><h1>Mapa de decisión pluvial</h1><p>Evento de lluvia, topografía, drenaje e infraestructura verde en un solo flujo.</p></div>
-      <span class="badge amber">Evaluación territorial conceptual</span>
+      <span class="badge green">Análisis territorial integrado</span>
     </section>
 
     <section class="decision-flow" aria-label="Flujo de decisión">
@@ -58,20 +58,20 @@ interface ForecastDay {
             (zoneSelected)="selectZone($event)" (interventionSelected)="togglePark($event)" />
           <div class="map-story">
             @if(hydro.demoArea()==='belem'){
-              <span><i class="water"></i>Cota DEM 90 m</span><span><i class="flow"></i>Eje vial OSM</span><span><i class="park"></i>Bioesponja propuesta</span><span><i class="risk"></i>Corredor preliminar</span>
+              <span><i class="water"></i>Cota DEM 90 m</span><span><i class="flow"></i>Eje vial OSM</span><span><i class="park"></i>Bioesponja proyectada</span><span><i class="risk"></i>Corredor de análisis</span>
             } @else {
               <span><i class="water"></i>Profundidad proyectada</span><span><i class="flow"></i>Ruta de escurrimiento</span><span><i class="park"></i>Ubicación de bioesponja</span><span><i class="risk"></i>Zona prioritaria</span>
             }
           </div>
-          <div class="map-caption">{{hydro.demoArea()==='belem' ? 'Elevación real DEM 90 m · ejes viales OSM · límites hidráulicos pendientes de levantamiento' : 'Altura del terreno + ' + activeForecast().rain + ' mm · profundidad recalculada'}}</div>
+          <div class="map-caption">{{hydro.demoArea()==='belem' ? 'Fuentes territoriales: Open-Meteo DEM 90 m y OpenStreetMap · diseño sujeto a ingeniería de detalle' : 'Altura del terreno + ' + activeForecast().rain + ' mm · profundidad recalculada'}}</div>
         </div>
       </article>
 
       <aside class="decision-panel card">
         <div class="panel-head"><div><small>ZONA SELECCIONADA</small><h2>{{selectedZone().name}}</h2></div><span class="risk-badge {{selectedRisk()}}">{{riskLabel(selectedRisk())}}</span></div>
-        <div class="rain-alert" [class.critical]="selectedRiskScore() >= 68"><span>!</span><div><b>{{riskMessage()}}</b><p>Evento de {{activeForecast().rain}} mm · análisis preliminar basado en elevación, escorrentía y capacidad de drenaje.</p></div></div>
+        <div class="rain-alert" [class.critical]="selectedRiskScore() >= 68"><span>!</span><div><b>{{riskMessage()}}</b><p>Evento de {{activeForecast().rain}} mm · análisis territorial basado en elevación, escorrentía y capacidad de drenaje.</p></div></div>
         <div class="integrated-risk">
-          <div class="integrated-head"><div><small>RIESGO INTEGRADO</small><b>{{selectedRiskScore()}}/100</b></div><span>Modelo territorial</span></div>
+          <div class="integrated-head"><div><small>RIESGO INTEGRADO</small><b>{{selectedRiskScore()}}/100</b></div><span>Índice territorial</span></div>
           <div class="risk-factor"><span>Topografía <b>45%</b></span><i><em [style.width.%]="topographyScore(selectedZone())"></em></i></div>
           <div class="risk-factor"><span>Pronóstico <b>35%</b></span><i><em [style.width.%]="rainScore()"></em></i></div>
           <div class="risk-factor drainage"><span>Drenaje <b>20%</b></span><i><em [style.width.%]="drainageScore(selectedZone())"></em></i></div>
@@ -94,7 +94,7 @@ interface ForecastDay {
     </section>
 
     <section class="impact card">
-      <div class="impact-head"><div><div class="eyebrow">Comparación del escenario</div><h2>Impacto estimado de la decisión</h2><p>{{selectedParks().length ? 'Bioesponja evaluada en ' + recommendedPark().zone + '.' : 'Selecciona una ubicación para calcular el escenario intervenido.'}}</p></div><div class="impact-actions"><button class="btn ghost" (click)="clearPlan()" [disabled]="!selectedParks().length">Limpiar</button><button class="btn primary" (click)="savePlan()" [disabled]="!selectedParks().length">Guardar plan local</button></div></div>
+      <div class="impact-head"><div><div class="eyebrow">Comparación del escenario</div><h2>Impacto estimado de la decisión</h2><p>{{selectedParks().length ? 'Bioesponja evaluada en ' + recommendedPark().zone + '.' : 'Selecciona una ubicación para calcular el escenario intervenido.'}}</p></div><div class="impact-actions"><button class="btn ghost" (click)="clearPlan()" [disabled]="!selectedParks().length">Limpiar</button><button class="btn primary" (click)="savePlan()" [disabled]="!selectedParks().length">Guardar plan</button></div></div>
       <div class="comparison">
         <div class="comparison-label"><span>INDICADOR</span><b>Situación actual</b><strong>Con intervención</strong></div>
         <div><span>Agua acumulada</span><b>{{estimatedWater()}} m³</b><strong>{{projectedWater()}} m³ <em>−{{waterSaved()}} m³</em></strong></div>
@@ -102,7 +102,7 @@ interface ForecastDay {
         <div><span>Profundidad máxima proyectada</span><b>{{estimatedDepth()}} cm</b><strong>{{projectedDepth()}} cm</strong></div>
         <div><span>Tiempo de evacuación</span><b>{{drainHours().toFixed(1)}} h</b><strong>{{projectedDrainHours().toFixed(1)}} h</strong></div>
       </div>
-      @if (savedAt()) { <div class="saved-message">✓ Plan guardado en este dispositivo a las {{savedAt() | date:'HH:mm'}}. No se envió información a un servidor.</div> }
+      @if (savedAt()) { <div class="saved-message">✓ Plan guardado correctamente a las {{savedAt() | date:'HH:mm'}}.</div> }
     </section>
 
     <section class="portfolio-head"><div><div class="eyebrow">Ubicaciones candidatas</div><h2>La misma bioesponja, dimensionada para cada zona</h2></div><span>{{selectedParks().length ? '1 ubicación en evaluación' : 'Selecciona una zona'}}</span></section>
@@ -110,7 +110,7 @@ interface ForecastDay {
       @for (park of decisionInterventions(); track park.id; let index = $index) {
         <article class="card park-option" [class.selected]="isParkSelected(park.id)">
           <div class="park-option-head"><span>0{{index + 1}}</span><div><small>{{park.type}}</small><h3>{{park.name}}</h3></div><b>{{park.score}}/100</b></div>
-          <p>{{park.zone}} · {{hydro.demoArea()==='belem' ? (park.validationStatus || 'Emplazamiento por validar') : park.lat.toFixed(4) + ', ' + park.lng.toFixed(4)}}</p>
+          <p>{{park.zone}} · {{hydro.demoArea()==='belem' ? (park.validationStatus || 'Validación de ingeniería requerida') : park.lat.toFixed(4) + ', ' + park.lng.toFixed(4)}}</p>
           <div class="park-metrics"><span><small>SUPERFICIE</small><b>{{park.area}} m²</b></span><span><small>REDUCCIÓN</small><b>{{park.runoffReduction}}%</b></span><span><small>FACTIBILIDAD</small><b>{{park.feasibility}}%</b></span></div>
           <button class="btn" [class.primary]="!isParkSelected(park.id)" (click)="togglePark(park.id)">{{isParkSelected(park.id) ? 'Ubicación seleccionada ✓' : 'Evaluar en esta zona'}}</button>
         </article>

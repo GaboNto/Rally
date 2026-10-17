@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
   template: `
     <section class="page-head">
       <div><div class="eyebrow">Modelo operativo</div><h1>Simulador de bioesponja</h1><p>Observa cómo la solución recibe, almacena, filtra y libera el agua durante un evento de lluvia.</p></div>
-      <span class="badge green">Modelo local · sin backend</span>
+      <span class="badge green">Motor hidráulico integrado</span>
     </section>
 
     <section class="model-overview" aria-label="Resumen del diseño">

@@ -20,10 +20,17 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should expose the complete navigation', () => {
+  it('should expose the consolidated product navigation', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.nav.length).toBe(9);
+    expect(app.nav.map(item => item.path)).toEqual([
+      '/dashboard',
+      '/mapa',
+      '/red-monitoreo',
+      '/infraestructura-verde',
+      '/modelo-bioesponja',
+      '/informes',
+    ]);
   });
 
   it('should render the Pomerape brand', () => {

@@ -4,7 +4,7 @@
     <nav aria-label="Navegación principal">@for(item of nav;track item.path){<a [routerLink]="item.path" routerLinkActive="active" (click)="menuOpen.set(false)"><span class="nav-icon">{{item.icon}}</span>{{item.label}} @if(item.path==='/alertas'&&activeAlerts()){<em>{{activeAlerts()}}</em>}</a>}</nav>
   </aside>
   <div class="main-wrap">
-    <header class="topbar"><button class="menu-toggle" (click)="menuOpen.set(!menuOpen())" aria-label="Abrir menú">☰</button><div class="location"><span>⌖</span><label><small>ÁREA DE OPERACIÓN</small><select [value]="hydro.demoArea()" (change)="changeDemoArea($event)" aria-label="Seleccionar área de operación"><option value="arica">Arica, Chile</option><option value="talcahuano">Talcahuano, Chile</option><option value="belem">Belém, Brasil</option><option value="quibdo">Quibdó, Colombia</option></select></label></div><div class="top-actions"><div class="time"><b>{{clock()|date:'HH:mm'}}</b><small>{{clock()|date:"dd MMM yyyy":"":"es-CL"}}</small></div><a routerLink="/alertas" class="alert-bell" aria-label="Ver alertas">!<em>{{activeAlerts()}}</em></a><div class="avatar">GM</div></div></header>
+    <header class="topbar"><button class="menu-toggle" (click)="menuOpen.set(!menuOpen())" aria-label="Abrir menú">☰</button><div class="location"><span>⌖</span><div><small>ÁREA DE OPERACIÓN</small><b>Belém, Pará, Brasil</b></div></div><div class="top-actions"><div class="time"><b>{{clock()|date:'HH:mm'}}</b><small>{{clock()|date:"dd MMM yyyy":"":"es-CL"}}</small></div><a routerLink="/alertas" class="alert-bell" aria-label="Ver alertas">!<em>{{activeAlerts()}}</em></a><div class="avatar">GM</div></div></header>
     <main><router-outlet /></main>
   </div>
 </div>

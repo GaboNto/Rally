@@ -110,11 +110,11 @@ import { HydroService } from '../core/hydro.service';
       <article class="card"><small>PRETRATAMIENTO</small><b>Reja a 45° + bio-gavión de 0,30 m</b><p>Retiene basura y sedimento antes del medio filtrante.</p></article>
       <article class="card"><small>ACCESIBILIDAD</small><b>Franja peatonal libre ≥ 1,20 m</b><p>Vados de 1,5 a 2,0 m entre celdas, conforme al criterio NBR 9050.</p></article>
       <article class="card"><small>CONTROL DE MAREA</small><b>Válvula de clapeta Ø160 mm</b><p>Evita el reflujo y permite descarga por gravedad cuando baja la marea.</p></article>
-      <article class="card"><small>VEGETACIÓN PROPUESTA</small><b>Heliconia, Costus y grama-são-carlos</b><p>Selección conceptual sujeta a validación con especialistas locales.</p></article>
+      <article class="card"><small>VEGETACIÓN PROPUESTA</small><b>Heliconia, Costus y grama-são-carlos</b><p>Paleta de anteproyecto; la selección definitiva se valida con especialistas locales.</p></article>
     </section>
 
     @if(evaluated()){
-      <section class="approval card"><div class="approval-icon">✓</div><div><small>DISEÑO CONCEPTUAL EVALUADO</small><h2>Configuración lista para comprobar su funcionamiento</h2><p>{{cellCount()}} celdas módulo {{moduleType()}} atienden {{treatedArea()}} m² y aportan {{captureCapacity()}} m³. El siguiente paso reproduce dinámicamente la entrada, almacenamiento, infiltración, descarga y posible rebalse.</p></div><div class="approval-actions"><button class="btn ghost" (click)="savePlan()">{{saved() ? '✓ Plan guardado' : 'Guardar plan local'}}</button><a routerLink="/modelo-bioesponja" class="btn primary">Abrir simulación →</a><a routerLink="/informes" class="btn ghost">Ir al informe</a></div></section>
+      <section class="approval card"><div class="approval-icon">✓</div><div><small>ANTEPROYECTO TÉCNICO EVALUADO</small><h2>Configuración lista para verificar su desempeño</h2><p>{{cellCount()}} celdas módulo {{moduleType()}} atienden {{treatedArea()}} m² y aportan {{captureCapacity()}} m³. El siguiente paso reproduce dinámicamente la entrada, almacenamiento, infiltración, descarga y posible rebalse.</p></div><div class="approval-actions"><button class="btn ghost" (click)="savePlan()">{{saved() ? '✓ Plan guardado' : 'Guardar plan'}}</button><a routerLink="/modelo-bioesponja" class="btn primary">Abrir simulación →</a><a routerLink="/informes" class="btn ghost">Ir al informe</a></div></section>
     }
   `,
   styles: [`
@@ -225,7 +225,7 @@ export class GreenInfrastructureComponent {
       captureCapacity: this.captureCapacity(),
       reduction: this.waterReduction(),
       integratedRisk: this.integratedRiskScore(),
-      validation: 'Diseño conceptual; requiere topografía, napa, permeabilidad, ancho de vía y punto de conexión',
+      validation: 'Anteproyecto técnico; requiere topografía de detalle, napa, permeabilidad, ancho de vía y punto de conexión',
       updatedAt: new Date().toISOString(),
     }));
   }

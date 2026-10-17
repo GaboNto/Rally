@@ -69,7 +69,7 @@ import { HydroService } from '../core/hydro.service';
         <div class="success-grid"><div><b>Indicadores de éxito</b><p>Reducción del caudal punta, volumen captado por evento, tiempo de vaciado menor a 24 h y disminución del área expuesta.</p></div><div><b>Operación y mantenimiento</b><p>Inspección antes de lluvias, retiro de sedimentos, revisión de entradas y rebalses, reposición vegetal y control periódico de infiltración.</p></div><div><b>Uso del agua</b><p>El agua retenida puede destinarse al riego de áreas verdes, siempre después de validar su calidad y cumplir la normativa sanitaria y municipal aplicable.</p></div></div>
       </section>
 
-      <p class="disclaimer">Diseño conceptual. Deben verificarse en terreno el ancho de las vías, superficie aportante, cotas frente a la marea, profundidad de napa, permeabilidad, intensidad IDF, especies, cobertura de comunicaciones y conexión con el PROMMAF. El informe base no define costos de construcción.</p>
+      <p class="disclaimer">Anteproyecto técnico. La ingeniería de detalle debe confirmar ancho de vías, superficie aportante, cotas frente a la marea, profundidad de napa, permeabilidad, intensidad IDF, especies, cobertura de comunicaciones y conexión con el PROMMAF. Los costos de construcción se determinan después del levantamiento y las especificaciones definitivas.</p>
     </article>
 
     @if (printingReport()) {
@@ -86,7 +86,7 @@ import { HydroService } from '../core/hydro.service';
         <section class="print-page">
           <div class="print-page-head"><div><b>POMERAPE</b><span>Informe técnico integral</span></div><span>{{documentCode}} · V1.0</span></div>
           <div class="print-title"><span>01</span><div><small>RESUMEN EJECUTIVO</small><h2>Diagnóstico general y recomendación</h2></div></div>
-          <p class="executive-copy">La solución propuesta articula lluvia, topografía, drenaje y monitoreo. En Belém se plantea una red conceptual de 13 celdas en tres corredores de Pratinha, con 180 m² de bioesponja y 49,5 m³ de almacenamiento estático.</p>
+          <p class="executive-copy">La solución propuesta articula lluvia, topografía, drenaje y monitoreo. En Belém se dimensiona una red de 13 celdas en tres corredores de Pratinha, con 180 m² de bioesponja y 49,5 m³ de almacenamiento estático.</p>
           <div class="print-kpis"><div><b>{{hydro.zones().length}}</b><span>Corredores</span></div><div><b>{{totalCells}}</b><span>Celdas</span></div><div><b>{{hydro.sensors().length}}</b><span>Instrumentos</span></div><div><b>{{totalArea}} m²</b><span>Superficie</span></div><div><b>{{totalStorage}} m³</b><span>Almacenamiento</span></div></div>
           <div class="institutional-callout"><b>Recomendación institucional</b><p>Priorizar {{priorityIntervention.name}} en conjunto con la inspección de {{prioritySegment.name}}. Esta primera intervención debe utilizarse como piloto medible antes de ampliar la solución hacia los demás sectores.</p></div>
           <div class="print-title compact"><span>02</span><div><small>ANÁLISIS TERRITORIAL</small><h2>Zonas y criterios de priorización</h2></div></div>
@@ -112,7 +112,7 @@ import { HydroService } from '../core/hydro.service';
           <div class="print-title compact"><span>06</span><div><small>CONTROL Y SEGUIMIENTO</small><h2>Indicadores institucionales</h2></div></div>
           <table><thead><tr><th>Indicador</th><th>Meta referencial</th><th>Frecuencia</th><th>Responsable sugerido</th></tr></thead><tbody><tr><td>Retención por corredor a 50 mm</td><td>16,5 m³ · 100%</td><td>Por evento</td><td>Equipo hidráulico</td></tr><tr><td>Tiempo de vaciado de lámina</td><td>Objetivo &lt; 12 h; máximo 24 h</td><td>Por evento</td><td>Operación y mantención</td></tr><tr><td>Diferencia entrada / salida</td><td>Diagnóstico automático</td><td>1 min con lluvia</td><td>Equipo de monitoreo</td></tr><tr><td>Sedimento en entrada</td><td>&lt; 10 cm</td><td>Mensual y poslluvia</td><td>Guardiões do Igarapé</td></tr><tr><td>Permeabilidad del medio</td><td>≥ 100 mm/h</td><td>Anual</td><td>Técnico hidráulico</td></tr></tbody></table>
           <div class="approval-grid"><div><small>REVISIÓN TÉCNICA</small><span></span><p>Nombre / cargo / firma</p></div><div><small>APROBACIÓN INSTITUCIONAL</small><span></span><p>Nombre / cargo / firma</p></div></div>
-          <div class="legal-note"><b>Alcance del documento</b><p>Diseño conceptual sujeto a levantamiento topográfico, estudio de napa y suelo, ensayo de permeabilidad, curvas IDF, coordinación con PROMMAF y presupuesto de ingeniería. Las posiciones del mapa son referenciales.</p></div>
+          <div class="legal-note"><b>Alcance del documento</b><p>Anteproyecto técnico basado en DEM Open-Meteo y ejes viales OpenStreetMap. La implantación ejecutiva requiere levantamiento topográfico, estudio de napa y suelo, ensayo de permeabilidad, curvas IDF, coordinación con PROMMAF y presupuesto de ingeniería.</p></div>
           <div class="print-page-footer"><span>Pomerape · Informe técnico institucional</span><span>Página 4 de 4</span></div>
         </section>
       </article>

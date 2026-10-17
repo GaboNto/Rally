@@ -113,7 +113,7 @@ export class HydroMapComponent implements AfterViewInit, OnChanges, OnDestroy {
         weight: this.selectedZoneId === zone.id ? 4 : 2,
       })
         .bindTooltip(this.demoArea === 'belem'
-          ? `<strong>${zone.name}</strong><br>Prioridad preliminar ${zone.risk}<br><small>Eje vial real · delimitación hidráulica por validar</small>`
+          ? `<strong>${zone.name}</strong><br>Prioridad territorial ${zone.risk}<br><small>Eje vial OSM · corredor de análisis</small>`
           : `<strong>${zone.name}</strong><br>Susceptibilidad ${zone.risk}<br><small>Monitoreo territorial</small>`)
         .on('click', () => this.zoneSelected.emit(zone.id))
         .addTo(riskLayer);
@@ -173,7 +173,7 @@ export class HydroMapComponent implements AfterViewInit, OnChanges, OnDestroy {
         ? '<div class="rain-source"><span>▲</span><div><small>COTA DEM</small><b>39 m</b><em>Punto alto de la malla analizada</em></div></div>'
         : `<div class="rain-source"><span>☔</span><div><small>PRONÓSTICO</small><b>${this.rainfall} mm de lluvia</b><em>El agua baja por la pendiente</em></div></div>`, iconSize: [1, 1] });
       const lowIcon = L.divIcon({ className: 'decision-risk-label', html: this.demoArea === 'belem'
-        ? '<div class="terrain-callout"><small>COTA DEM BAJA</small><b>4 m · susceptibilidad preliminar</b></div>'
+        ? '<div class="terrain-callout"><small>COTA DEM BAJA</small><b>4 m · susceptibilidad territorial</b></div>'
         : '<div class="terrain-callout"><small>ZONA BAJA</small><b>El agua converge y se acumula</b></div>', iconSize: [1, 1] });
       if (this.demoArea !== 'belem') {
         L.marker(highPoint, { icon: rainIcon, interactive: false }).addTo(decisionLayer);
@@ -295,7 +295,7 @@ export class HydroMapComponent implements AfterViewInit, OnChanges, OnDestroy {
             fillColor: color,
             fillOpacity: this.surfaceMode === 'elevation' ? .54 : .36,
             interactive: true,
-          }).bindTooltip(`<strong>Cota ${point.elevation} m</strong><br>DEM ${BELEM_TERRAIN_METADATA.resolution} · ${BELEM_TERRAIN_METADATA.crs}<br><small>Análisis preliminar; no es cota de proyecto</small>`));
+          }).bindTooltip(`<strong>Cota ${point.elevation} m</strong><br>DEM ${BELEM_TERRAIN_METADATA.resolution} · ${BELEM_TERRAIN_METADATA.crs}<br><small>Dato territorial; el diseño ejecutivo requiere topografía de detalle</small>`));
         });
       }
       return L.layerGroup(layers);

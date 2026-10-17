@@ -21,6 +21,15 @@ export class HydroService {
   readonly lastUpdated = signal(new Date());
   private timer?: ReturnType<typeof setInterval>;
 
+  constructor() {
+    try {
+      const savedAlerts = JSON.parse(localStorage.getItem('pomerape-alerts') || 'null');
+      if (Array.isArray(savedAlerts)) this.alerts.set(savedAlerts);
+    } catch {
+      localStorage.removeItem('pomerape-alerts');
+    }
+  }
+
   readonly selectedSensor = computed(() => this.sensors().find(s => s.id === this.selectedSensorId()) ?? this.sensors()[0]);
   readonly activeAlerts = computed(() => this.alerts().filter(a => a.status !== 'cerrada'));
   readonly metrics = computed(() => {
@@ -87,6 +96,8 @@ export class HydroService {
 
   updateAlert(id: string, status: AlertStatus) {
     this.alerts.update(items => items.map(a => a.id === id ? { ...a, status, assignee: status === 'asignada' ? 'Equipo de turno' : a.assignee } : a));
+    localStorage.setItem('pomerape-alerts', JSON.stringify(this.alerts()));
+    this.lastUpdated.set(new Date());
   }
 
   toggleIntervention(id: string) {
