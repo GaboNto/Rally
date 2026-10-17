@@ -9,18 +9,18 @@ import { HydroService } from '../core/hydro.service';
   template: `
     <section class="page-head">
       <div><div class="eyebrow">Plan integral de gestión pluvial</div><h1>Informe técnico Pomerape</h1><p>Diagnóstico de la red y propuesta institucional de infraestructura verde.</p></div>
-      <div class="page-actions"><div><span class="badge blue">PMR-AR-001 · Versión 1.0</span><small>Actualizado {{hydro.lastUpdated() | date:'dd/MM/yyyy HH:mm'}}</small></div><button class="btn primary" (click)="printReport()">▤ Descargar informe PDF</button></div>
+      <div class="page-actions"><div><span class="badge blue">{{documentCode}} · Versión 1.0</span><small>Actualizado {{hydro.lastUpdated() | date:'dd/MM/yyyy HH:mm'}}</small></div><button class="btn primary" (click)="printReport()">▤ Descargar informe PDF</button></div>
     </section>
 
     <article class="card report-document">
       <header class="document-head">
-        <div><span class="brand">Pomerape</span><h2>Propuesta integral de monitoreo y recolección de aguas lluvia</h2><p>Área de operación: Arica, Chile · Documento técnico institucional.</p></div>
-        <div class="document-code"><small>CÓDIGO</small><b>PMR-AR-001</b></div>
+        <div><span class="brand">Pomerape</span><h2>Propuesta integral de monitoreo y recolección de aguas lluvia</h2><p>Área de operación: {{areaLabel}} · Documento técnico institucional.</p></div>
+        <div class="document-code"><small>CÓDIGO</small><b>{{documentCode}}</b></div>
       </header>
 
       <section class="executive">
-        <div><span class="section-tag">Resumen ejecutivo</span><h3>Una red que detecta el riesgo y tres parques que retienen el agua</h3><p>La propuesta combina la recuperación de la red IoT con infraestructura verde en Centro, Norte y Costero Sur. Los sensores permiten anticipar obstrucciones y sobrecargas; los parques recolectores capturan, infiltran y reutilizan la escorrentía antes de que llegue a los tramos más exigidos.</p></div>
-        <aside><b>Recomendación prioritaria</b><p>Ejecutar primero el Jardín de lluvia Centro y la inspección del colector TR-02. Es la zona de mayor riesgo y ofrece la mejor relación entre factibilidad, costo y reducción de escorrentía.</p></aside>
+        <div><span class="section-tag">Resumen ejecutivo</span><h3>Una red que detecta el riesgo y tres parques que retienen el agua</h3><p>La propuesta combina la recuperación de la red IoT con infraestructura verde en los sectores priorizados. Los sensores permiten anticipar obstrucciones y sobrecargas; los parques recolectores capturan, infiltran y reutilizan la escorrentía antes de que llegue a los tramos más exigidos.</p></div>
+        <aside><b>Recomendación prioritaria</b><p>Ejecutar primero {{priorityIntervention.name}} y atender {{prioritySegment.name}}. {{prioritySensor.id}} respalda la prioridad con {{prioritySensor.level}} cm registrados y una tendencia de {{prioritySensor.variation > 0 ? '+' : ''}}{{prioritySensor.variation}} cm/10 min.</p></aside>
       </section>
 
       <section class="metrics">
@@ -37,7 +37,7 @@ import { HydroService } from '../core/hydro.service';
           <thead><tr><th>Sensor</th><th>Ubicación / tramo</th><th>Posición</th><th>Coordenadas</th><th>Estado</th><th>Nivel</th><th>Capacidad usada</th></tr></thead>
           <tbody>@for (sensor of hydro.sensors(); track sensor.id) {<tr><td><b>{{sensor.id}}</b><small>{{sensor.name}}</small></td><td>{{sensor.sector}} · {{sensor.segmentId}}</td><td>{{sensor.position}}</td><td class="coords">{{sensor.lat.toFixed(4)}}, {{sensor.lng.toFixed(4)}}</td><td><span class="status" [class.ok]="sensor.status === 'activo'" [class.warn]="sensor.status !== 'activo'">{{sensor.status}}</span></td><td>{{sensor.level}} cm</td><td>{{sensorUsage(sensor.level, sensor.capacity)}}%</td></tr>}</tbody>
         </table></div>
-        <div class="observation"><b>Hallazgo de red:</b> recuperar la conexión de HG-009 y finalizar el mantenimiento de HG-011. HG-003 y HG-005 deben conservar monitoreo reforzado por sus niveles altos y su relación con los tramos TR-02 y TR-03.</div>
+        <div class="observation"><b>Hallazgo de red:</b> {{prioritySensor.id}} utiliza {{sensorUsage(prioritySensor.level, prioritySensor.capacity)}}% de su rango y presenta una variación de {{prioritySensor.variation > 0 ? '+' : ''}}{{prioritySensor.variation}} cm/10 min; esta lectura confirma la prioridad de {{priorityIntervention.zone}}. {{networkAction}}</div>
       </section>
 
       <section class="report-section">
@@ -61,10 +61,10 @@ import { HydroService } from '../core/hydro.service';
       <section class="report-section solution-section">
         <div class="section-title"><div><span class="section-number">4</span><div><h3>Solución completa y plan de implementación</h3><p>Ruta sugerida para pasar del monitoreo a la reducción efectiva del riesgo.</p></div></div></div>
         <div class="roadmap">
-          <article><span>0–2 meses</span><h4>Estabilizar y validar</h4><p>Reconectar HG-009, completar HG-011, inspeccionar TR-02 y TR-03, levantar topografía de detalle y validar disponibilidad de suelo en las tres coordenadas propuestas.</p></article>
-          <article><span>2–5 meses</span><h4>Diseñar el piloto Centro</h4><p>Desarrollar ingeniería del Jardín de lluvia Centro: cotas, rebalse seguro, especies de bajo consumo, pretratamiento de sedimentos, acceso de mantención y conexión con el colector.</p></article>
+          <article><span>0–2 meses</span><h4>Estabilizar y validar</h4><p>{{networkAction}} Inspeccionar los tramos prioritarios, levantar topografía de detalle y validar disponibilidad de suelo en las tres coordenadas propuestas.</p></article>
+          <article><span>2–5 meses</span><h4>Diseñar el piloto prioritario</h4><p>Desarrollar la ingeniería de {{priorityIntervention.name}}: cotas, rebalse seguro, especies adecuadas, pretratamiento de sedimentos, acceso de mantención y conexión con el drenaje.</p></article>
           <article><span>5–9 meses</span><h4>Construir y conectar</h4><p>Ejecutar el parque piloto, incorporar sensores de nivel y humedad, definir umbrales de alerta y medir agua captada, tiempo de vaciado y reducción del caudal punta.</p></article>
-          <article><span>9–18 meses</span><h4>Escalar la red verde</h4><p>Con los resultados del piloto, construir la Biozanja Norte y la Biorretención Costera. Integrar mantenimiento preventivo, participación vecinal y tablero de seguimiento.</p></article>
+          <article><span>9–18 meses</span><h4>Escalar la red verde</h4><p>Con los resultados del piloto, ejecutar las demás alternativas priorizadas. Integrar mantenimiento preventivo, participación vecinal y tablero de seguimiento.</p></article>
         </div>
         <div class="success-grid"><div><b>Indicadores de éxito</b><p>Disponibilidad IoT ≥ 95%, reducción del caudal punta, volumen captado por evento, tiempo de vaciado menor a 24 h y disminución de alertas repetidas.</p></div><div><b>Operación y mantenimiento</b><p>Inspección antes de lluvias, retiro de sedimentos, revisión de entradas y rebalses, reposición vegetal y calibración semestral de sensores.</p></div><div><b>Uso del agua</b><p>El agua retenida puede destinarse al riego de áreas verdes, siempre después de validar su calidad y cumplir la normativa sanitaria y municipal aplicable.</p></div></div>
       </section>
@@ -78,25 +78,25 @@ import { HydroService } from '../core/hydro.service';
           <div class="cover-top"><div class="institutional-brand"><span class="brand-seal">P</span><div><b>POMERAPE</b><small>PLATAFORMA DE GESTIÓN PLUVIAL</small></div></div><span class="document-class">INFORME TÉCNICO INSTITUCIONAL</span></div>
           <div class="cover-rule"></div>
           <div class="cover-body"><span class="cover-kicker">PLAN INTEGRAL DE RESILIENCIA HÍDRICA</span><h1>Propuesta de monitoreo y recolección de aguas lluvia</h1><p>Diagnóstico de la red de sensores y diseño técnico de parques recolectores para reducir la escorrentía urbana.</p></div>
-          <div class="cover-data"><div><small>ÁREA DE ESTUDIO</small><b>Arica, Chile</b></div><div><small>CÓDIGO DEL DOCUMENTO</small><b>PMR-AR-001</b></div><div><small>VERSIÓN</small><b>1.0</b></div><div><small>FECHA DE EMISIÓN</small><b>{{hydro.lastUpdated() | date:'dd/MM/yyyy'}}</b></div></div>
+          <div class="cover-data"><div><small>ÁREA DE ESTUDIO</small><b>{{areaLabel}}</b></div><div><small>CÓDIGO DEL DOCUMENTO</small><b>{{documentCode}}</b></div><div><small>VERSIÓN</small><b>1.0</b></div><div><small>FECHA DE EMISIÓN</small><b>{{hydro.lastUpdated() | date:'dd/MM/yyyy'}}</b></div></div>
           <div class="cover-summary"><span>OBJETIVO DEL DOCUMENTO</span><p>Presentar una solución integrada que vincule monitoreo IoT, atención de puntos críticos e infraestructura verde para captar, retardar, infiltrar y reutilizar aguas lluvia.</p></div>
           <div class="cover-footer"><div><small>ELABORADO POR</small><b>Equipo técnico Pomerape</b></div><div><small>ESTADO</small><b>Documento para evaluación institucional</b></div></div>
         </section>
 
         <section class="print-page">
-          <div class="print-page-head"><div><b>POMERAPE</b><span>Informe técnico integral</span></div><span>PMR-AR-001 · V1.0</span></div>
+          <div class="print-page-head"><div><b>POMERAPE</b><span>Informe técnico integral</span></div><span>{{documentCode}} · V1.0</span></div>
           <div class="print-title"><span>01</span><div><small>RESUMEN EJECUTIVO</small><h2>Diagnóstico general y recomendación</h2></div></div>
-          <p class="executive-copy">La solución propuesta articula la recuperación de la red de sensores con tres intervenciones de infraestructura verde. La información disponible identifica al Sector Centro como prioridad de actuación debido al nivel registrado por HG-003, la condición del colector TR-02 y la concentración de riesgo urbano.</p>
+          <p class="executive-copy">La solución propuesta articula la recuperación de la red de sensores con tres intervenciones de infraestructura verde. La información disponible identifica a {{priorityIntervention.zone}} como prioridad debido al nivel registrado por {{prioritySensor.id}}, la condición de {{prioritySegment.name}} y la concentración de riesgo urbano.</p>
           <div class="print-kpis"><div><b>{{hydro.sensors().length}}</b><span>Sensores instalados</span></div><div><b>{{hydro.metrics().active}}</b><span>Sensores activos</span></div><div><b>{{hydro.activeAlerts().length}}</b><span>Incidencias abiertas</span></div><div><b>{{hydro.interventions().length}}</b><span>Parques propuestos</span></div><div><b>{{formatMillions(totalCost)}}</b><span>Inversión estimada</span></div></div>
-          <div class="institutional-callout"><b>Recomendación institucional</b><p>Priorizar el Jardín de lluvia Centro en conjunto con la inspección del colector TR-02. Esta primera intervención debe utilizarse como piloto medible antes de ampliar la solución hacia Norte y Costero Sur.</p></div>
+          <div class="institutional-callout"><b>Recomendación institucional</b><p>Priorizar {{priorityIntervention.name}} en conjunto con la inspección de {{prioritySegment.name}}. Esta primera intervención debe utilizarse como piloto medible antes de ampliar la solución hacia los demás sectores.</p></div>
           <div class="print-title compact"><span>02</span><div><small>RED DE MONITOREO</small><h2>Estado y ubicación de sensores</h2></div></div>
           <table class="sensor-table"><thead><tr><th>ID</th><th>Nombre / sector</th><th>Tramo y posición</th><th>Coordenadas</th><th>Estado</th><th>Nivel</th></tr></thead><tbody>@for (sensor of hydro.sensors(); track sensor.id) {<tr><td><b>{{sensor.id}}</b></td><td>{{sensor.name}}<br><small>{{sensor.sector}}</small></td><td>{{sensor.segmentId}} · {{sensor.position}}</td><td>{{sensor.lat.toFixed(4)}}<br>{{sensor.lng.toFixed(4)}}</td><td><span class="print-status" [class.issue]="sensor.status !== 'activo'">{{sensor.status}}</span></td><td>{{sensor.level}} / {{sensor.capacity}} cm<br><small>{{sensorUsage(sensor.level, sensor.capacity)}}% utilizado</small></td></tr>}</tbody></table>
-          <div class="technical-note"><b>Acción inmediata de red</b><p>Reconectar HG-009, completar el mantenimiento de HG-011 y reforzar el seguimiento operativo de HG-003 y HG-005.</p></div>
+          <div class="technical-note"><b>Acción inmediata de red</b><p>{{networkAction}} Reforzar el seguimiento operativo de {{prioritySensor.id}}.</p></div>
           <div class="print-page-footer"><span>Pomerape · Informe técnico institucional</span><span>Página 2 de 4</span></div>
         </section>
 
         <section class="print-page">
-          <div class="print-page-head"><div><b>POMERAPE</b><span>Informe técnico integral</span></div><span>PMR-AR-001 · V1.0</span></div>
+          <div class="print-page-head"><div><b>POMERAPE</b><span>Informe técnico integral</span></div><span>{{documentCode}} · V1.0</span></div>
           <div class="print-title"><span>03</span><div><small>FUNDAMENTO TÉCNICO</small><h2>Diagnóstico de tramos prioritarios</h2></div></div>
           <p class="section-intro">Los siguientes tramos requieren una acción correctiva o información complementaria antes de cerrar el diagnóstico.</p>
           <table><thead><tr><th>Tramo</th><th>Condición</th><th>Confianza</th><th>Evidencia</th><th>Acción recomendada</th></tr></thead><tbody>@for (segment of relevantSegments; track segment.id) {<tr><td><b>{{segment.id}}</b><br>{{segment.name}}</td><td>{{segment.condition.replaceAll('_', ' ')}}</td><td>{{segment.confidence}}%</td><td>{{segment.evidence}}</td><td>{{segment.suggestedAction}}</td></tr>}</tbody></table>
@@ -106,9 +106,9 @@ import { HydroService } from '../core/hydro.service';
         </section>
 
         <section class="print-page last-page">
-          <div class="print-page-head"><div><b>POMERAPE</b><span>Informe técnico integral</span></div><span>PMR-AR-001 · V1.0</span></div>
+          <div class="print-page-head"><div><b>POMERAPE</b><span>Informe técnico integral</span></div><span>{{documentCode}} · V1.0</span></div>
           <div class="print-title"><span>05</span><div><small>HOJA DE RUTA</small><h2>Plan de implementación</h2></div></div>
-          <div class="print-roadmap"><article><span>ETAPA 1 · 0–2 MESES</span><h3>Estabilizar y validar</h3><p>Recuperar HG-009 y HG-011, inspeccionar TR-02 y TR-03, ejecutar levantamiento topográfico y validar disponibilidad de suelo.</p></article><article><span>ETAPA 2 · 2–5 MESES</span><h3>Diseñar el piloto Centro</h3><p>Preparar ingeniería, permisos, cotas, rebalse seguro, selección vegetal, pretratamiento de sedimentos y acceso de mantención.</p></article><article><span>ETAPA 3 · 5–9 MESES</span><h3>Construir y conectar</h3><p>Ejecutar el parque piloto, incorporar telemetría y medir volumen captado, tiempo de vaciado y reducción del caudal punta.</p></article><article><span>ETAPA 4 · 9–18 MESES</span><h3>Evaluar y escalar</h3><p>Validar el desempeño y extender la solución hacia Norte y Costero Sur, con mantenimiento preventivo y seguimiento ciudadano.</p></article></div>
+          <div class="print-roadmap"><article><span>ETAPA 1 · 0–2 MESES</span><h3>Estabilizar y validar</h3><p>{{networkAction}} Inspeccionar los tramos prioritarios, ejecutar levantamiento topográfico y validar disponibilidad de suelo.</p></article><article><span>ETAPA 2 · 2–5 MESES</span><h3>Diseñar el piloto</h3><p>Preparar ingeniería, permisos, cotas, rebalse seguro, selección vegetal, pretratamiento de sedimentos y acceso de mantención.</p></article><article><span>ETAPA 3 · 5–9 MESES</span><h3>Construir y conectar</h3><p>Ejecutar el parque piloto, incorporar telemetría y medir volumen captado, tiempo de vaciado y reducción del caudal punta.</p></article><article><span>ETAPA 4 · 9–18 MESES</span><h3>Evaluar y escalar</h3><p>Validar el desempeño y extender la solución hacia los demás sectores, con mantenimiento preventivo y seguimiento ciudadano.</p></article></div>
           <div class="print-title compact"><span>06</span><div><small>CONTROL Y SEGUIMIENTO</small><h2>Indicadores institucionales</h2></div></div>
           <table><thead><tr><th>Indicador</th><th>Meta referencial</th><th>Frecuencia</th><th>Responsable sugerido</th></tr></thead><tbody><tr><td>Disponibilidad de la red IoT</td><td>≥ 95%</td><td>Mensual</td><td>Unidad de monitoreo</td></tr><tr><td>Reducción del caudal punta</td><td>Validar contra línea base</td><td>Por evento</td><td>Equipo hidráulico</td></tr><tr><td>Tiempo de vaciado del parque</td><td>&lt; 24 horas</td><td>Por evento</td><td>Operación y mantención</td></tr><tr><td>Volumen de agua captada</td><td>Registro continuo</td><td>Por evento</td><td>Unidad de monitoreo</td></tr><tr><td>Incidencias recurrentes</td><td>Tendencia decreciente</td><td>Trimestral</td><td>Coordinación municipal</td></tr></tbody></table>
           <div class="approval-grid"><div><small>REVISIÓN TÉCNICA</small><span></span><p>Nombre / cargo / firma</p></div><div><small>APROBACIÓN INSTITUCIONAL</small><span></span><p>Nombre / cargo / firma</p></div></div>
@@ -137,6 +137,12 @@ export class ReportsComponent {
   get totalArea() { return this.hydro.interventions().reduce((total, item) => total + item.area, 0); }
   get totalCost() { return this.hydro.interventions().reduce((total, item) => total + item.cost, 0); }
   get totalReduction() { return this.hydro.interventions().reduce((total, item) => total + item.runoffReduction, 0); }
+  get areaLabel() { return this.hydro.demoArea() === 'talcahuano' ? 'Talcahuano, Región del Biobío' : this.hydro.demoArea() === 'belem' ? 'Belém, Pará, Brasil' : this.hydro.demoArea() === 'quibdo' ? 'Quibdó, Colombia' : 'Arica, Chile'; }
+  get documentCode() { return this.hydro.demoArea() === 'talcahuano' ? 'PMR-TH-001' : this.hydro.demoArea() === 'belem' ? 'PMR-BL-001' : this.hydro.demoArea() === 'quibdo' ? 'PMR-QD-001' : 'PMR-AR-001'; }
+  get prioritySensor() { return [...this.hydro.sensors()].filter(sensor => sensor.status === 'activo').sort((a, b) => (b.level / b.capacity + Math.max(0, b.variation) / 10) - (a.level / a.capacity + Math.max(0, a.variation) / 10))[0] ?? this.hydro.sensors()[0]; }
+  get priorityIntervention() { return [...this.hydro.interventions()].sort((a, b) => b.score - a.score)[0]; }
+  get prioritySegment() { return [...this.relevantSegments].sort((a, b) => b.confidence - a.confidence)[0] ?? this.hydro.segments()[0]; }
+  get networkAction() { const unavailable = this.hydro.sensors().filter(sensor => sensor.status !== 'activo').map(sensor => sensor.id); return unavailable.length ? `Recuperar además los puntos ${unavailable.join(' y ')}.` : 'Mantener la disponibilidad y calibración de la red.'; }
   sensorUsage(level: number, capacity: number) { return Math.round((level / capacity) * 100); }
   formatCurrency(value: number) { return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(value); }
   formatMillions(value: number) { return '$' + (value / 1_000_000).toFixed(1).replace('.', ',') + ' M'; }

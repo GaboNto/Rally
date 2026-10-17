@@ -10,7 +10,7 @@ const readings = (base: number, trend = 0, rain = 0) => Array.from({ length: 18 
 
 const sensor = (id: string, name: string, sector: string, segmentId: string, position: Sensor['position'], lat: number, lng: number, status: Sensor['status'], level: number, capacity: number, variation: number, trend = 0, rain = 0): Sensor => ({
   id, name, sector, segmentId, position, lat, lng, status, level, capacity, variation,
-  lastReading: new Date(now - (status === 'desconectado' ? 48 : 2) * 60_000).toISOString(), readings: readings(level - trend * 17, trend, rain),
+  lastReading: new Date(now - (status === 'desconectado' ? 48 : 2) * 60_000).toISOString(), readings: readings(level - trend * 17, trend, rain), assetType: 'rejilla_drenaje',
 });
 
 export const DEMO_SENSORS: Sensor[] = [
@@ -74,4 +74,112 @@ export const DEMO_REPORTS: CommunityReport[] = [
   { id:'RC-028', category:'Sumidero obstruido', location:'Av. 18 de Septiembre 1240, Sector Centro', description:'Acumulación visible junto a rejilla.', reporter:'Vecino verificado', status:'inspeccion', createdAt:new Date(now-110*60_000).toISOString(), assignee:'Cuadrilla Centro' },
   { id:'RC-027', category:'Acumulación de agua', location:'Pasaje Piloto, Sector Norte', description:'Agua permanece luego de la lluvia.', reporter:'Reporte ciudadano', status:'validado', createdAt:new Date(now-210*60_000).toISOString() },
   { id:'RC-026', category:'Sumidero obstruido', location:'Calle Referencia, Sector Costero', description:'Residuos en acceso al sumidero.', reporter:'Reporte ciudadano', status:'resuelto', createdAt:new Date(now-1500*60_000).toISOString(), assignee:'Cuadrilla Costera' },
+];
+
+export const TALCAHUANO_SENSORS: Sensor[] = [
+  sensor('TH-001', 'Canal El Morro · Entrada', 'Centro', 'TH-TR-01', 'aguas arriba', -36.7240, -73.1195, 'activo', 82, 95, 4.1, 1.35, 12),
+  sensor('TH-002', 'Canal El Morro · Salida', 'Centro', 'TH-TR-01', 'aguas abajo', -36.7270, -73.1220, 'activo', 39, 95, .8, .2, 12),
+  sensor('TH-003', 'Colector Gaete · Entrada', 'Gaete', 'TH-TR-02', 'aguas arriba', -36.7380, -73.1140, 'activo', 69, 85, 3.2, 1, 11),
+  sensor('TH-004', 'Colector Gaete · Salida', 'Gaete', 'TH-TR-02', 'aguas abajo', -36.7410, -73.1170, 'activo', 48, 85, 1.1, .35, 11),
+  sensor('TH-005', 'Canal Perales · Entrada', 'Vegas de Perales', 'TH-TR-03', 'aguas arriba', -36.7580, -73.1030, 'activo', 74, 90, 3.7, 1.15, 13),
+  sensor('TH-006', 'Canal Perales · Salida', 'Vegas de Perales', 'TH-TR-03', 'aguas abajo', -36.7620, -73.1070, 'activo', 61, 90, 2.4, .75, 13),
+  sensor('TH-007', 'Sumidero Centro', 'Centro', 'TH-TR-04', 'aguas arriba', -36.7205, -73.1150, 'mantenimiento', 26, 70, 0),
+  sensor('TH-008', 'Descarga a la bahía', 'Gaete', 'TH-TR-05', 'aguas abajo', -36.7345, -73.1260, 'desconectado', 0, 80, 0),
+];
+
+export const TALCAHUANO_SEGMENTS: DrainageSegment[] = [
+  { id:'TH-TR-01', name:'Canal El Morro', sector:'Centro', capacity:1.1, sensorIds:['TH-001','TH-002'], coordinates:[[-36.7240,-73.1195],[-36.7270,-73.1220]], condition:'posible_obstruccion', confidence:89, evidence:'El nivel aguas arriba crece con mayor rapidez que la descarga del tramo.', suggestedAction:'Inspeccionar rejillas y retirar material antes del próximo frente de lluvia.' },
+  { id:'TH-TR-02', name:'Colector Gaete', sector:'Gaete', capacity:.95, sensorIds:['TH-003','TH-004'], coordinates:[[-36.7380,-73.1140],[-36.7410,-73.1170]], condition:'sobrecarga', confidence:84, evidence:'Ambos sensores registran ocupación elevada y aumento sostenido.', suggestedAction:'Mantener monitoreo continuo y habilitar almacenamiento temporal.' },
+  { id:'TH-TR-03', name:'Canal Vegas de Perales', sector:'Vegas de Perales', capacity:1.05, sensorIds:['TH-005','TH-006'], coordinates:[[-36.7580,-73.1030],[-36.7620,-73.1070]], condition:'sobrecarga', confidence:86, evidence:'La capacidad utilizada supera el 80 % en la entrada del tramo.', suggestedAction:'Priorizar una solución de retención e infiltración en el sector.' },
+  { id:'TH-TR-04', name:'Red de sumideros Centro', sector:'Centro', capacity:.72, sensorIds:['TH-007'], coordinates:[[-36.7205,-73.1150],[-36.7240,-73.1170]], condition:'no_concluyente', confidence:32, evidence:'El sensor se encuentra en mantenimiento.', suggestedAction:'Restablecer el sensor y completar una inspección en terreno.' },
+  { id:'TH-TR-05', name:'Descarga a la bahía', sector:'Gaete', capacity:1.25, sensorIds:['TH-008'], coordinates:[[-36.7345,-73.1260],[-36.7360,-73.1300]], condition:'no_concluyente', confidence:25, evidence:'No existe telemetría reciente en el punto de descarga.', suggestedAction:'Recuperar conectividad antes de validar la capacidad disponible.' },
+];
+
+export const TALCAHUANO_ZONES: RiskZone[] = [
+  { id:'Z-01', name:'Sector Centro', risk:'alto', runoff:86, polygon:[[-36.718,-73.126],[-36.717,-73.111],[-36.730,-73.109],[-36.732,-73.124]] },
+  { id:'Z-02', name:'Sector Gaete', risk:'alto', runoff:79, polygon:[[-36.733,-73.122],[-36.732,-73.108],[-36.746,-73.105],[-36.747,-73.120]] },
+  { id:'Z-03', name:'Sector Vegas de Perales', risk:'medio', runoff:68, polygon:[[-36.751,-73.112],[-36.750,-73.096],[-36.765,-73.092],[-36.767,-73.108]] },
+];
+
+export const TALCAHUANO_RESERVOIRS: Reservoir[] = [
+  { id:'TH-RP-01', name:'Estanque regulador Centro', lat:-36.7275, lng:-73.1180, fill:67, capacity:2800 },
+  { id:'TH-RP-02', name:'Estanque regulador Perales', lat:-36.7595, lng:-73.1015, fill:43, capacity:3600 },
+];
+
+export const TALCAHUANO_ALERTS: HydroAlert[] = [
+  { id:'TH-AL-201', type:'Posible obstrucción', severity:'critica', location:'Canal El Morro', relatedId:'TH-TR-01', timestamp:new Date(now-14*60_000).toISOString(), status:'nueva', action:'Inspeccionar rejillas y conducto antes del próximo frente de lluvia.' },
+  { id:'TH-AL-200', type:'Capacidad elevada', severity:'alta', location:'Canal Vegas de Perales', relatedId:'TH-TR-03', timestamp:new Date(now-26*60_000).toISOString(), status:'confirmada', action:'Activar seguimiento continuo y preparar retención temporal.', assignee:'Equipo hidráulico' },
+  { id:'TH-AL-199', type:'Sensor desconectado', severity:'media', location:'Descarga a la bahía', relatedId:'TH-008', timestamp:new Date(now-52*60_000).toISOString(), status:'asignada', action:'Verificar alimentación y comunicaciones.', assignee:'Cuadrilla Talcahuano' },
+];
+
+export const TALCAHUANO_INTERVENTIONS: GreenIntervention[] = [
+  { id:'IV-01', name:'Parque de lluvia El Morro', type:'Parque de absorción', zone:'Sector Centro', score:91, cost:31800000, area:620, runoffReduction:24, feasibility:87, lat:-36.7260, lng:-73.1165, saved:true },
+  { id:'IV-02', name:'Biozanja urbana Gaete', type:'Biozanja vegetada', zone:'Sector Gaete', score:84, cost:27400000, area:740, runoffReduction:22, feasibility:79, lat:-36.7400, lng:-73.1115, saved:false },
+  { id:'IV-03', name:'Humedal urbano Perales', type:'Área de biorretención', zone:'Sector Vegas de Perales', score:88, cost:39600000, area:1150, runoffReduction:31, feasibility:82, lat:-36.7590, lng:-73.1000, saved:false },
+];
+
+export const TALCAHUANO_SCENARIOS: ScenarioResult[] = [
+  { id:'A', name:'Infraestructura actual', description:'Comportamiento esperado sin nuevas intervenciones.', peakFlow:3.16, runoff:4920, overflow:780, timeToPeak:34, cost:0, area:0, color:'#ff7a59' },
+  { id:'B', name:'Parque El Morro', description:'Captación e infiltración en Sector Centro.', peakFlow:2.54, runoff:3740, overflow:465, timeToPeak:43, cost:31800000, area:620, color:'#27d3b2' },
+  { id:'C', name:'Biozanja Gaete', description:'Conducción verde y retención distribuida en Gaete.', peakFlow:2.61, runoff:3890, overflow:490, timeToPeak:41, cost:27400000, area:740, color:'#48a7ff' },
+  { id:'D', name:'Red integral', description:'Parque El Morro, biozanja Gaete y humedal Perales.', peakFlow:1.92, runoff:2780, overflow:190, timeToPeak:52, cost:98800000, area:2510, color:'#a78bfa' },
+];
+
+export const TALCAHUANO_REPORTS: CommunityReport[] = [
+  { id:'TH-RC-03', category:'Acumulación de agua', location:'Sector Centro, Talcahuano', description:'Persistencia de agua junto a la red de sumideros.', reporter:'Equipo territorial', status:'inspeccion', createdAt:new Date(now-75*60_000).toISOString(), assignee:'Cuadrilla Talcahuano' },
+  { id:'TH-RC-02', category:'Canal con residuos', location:'Canal El Morro, Talcahuano', description:'Material visible en la entrada del canal.', reporter:'Inspección municipal', status:'validado', createdAt:new Date(now-160*60_000).toISOString() },
+];
+
+export const BELEM_SENSORS: Sensor[] = [
+  sensor('BL-001', 'Canal da Estrada Nova · Entrada', 'Cidade Velha', 'BL-TR-01', 'aguas arriba', -1.4670, -48.5000, 'activo', 88, 100, 4.6, 1.45, 18),
+  sensor('BL-002', 'Canal da Estrada Nova · Saída', 'Cidade Velha', 'BL-TR-01', 'aguas abajo', -1.4750, -48.5070, 'activo', 57, 100, 1.4, .4, 18),
+  sensor('BL-003', 'Canal do Tucunduba · Entrada', 'Terra Firme', 'BL-TR-02', 'aguas arriba', -1.4610, -48.4560, 'activo', 81, 95, 4.1, 1.25, 21),
+  sensor('BL-004', 'Canal do Tucunduba · Saída', 'Terra Firme', 'BL-TR-02', 'aguas abajo', -1.4720, -48.4690, 'activo', 63, 95, 2.2, .65, 21),
+  sensor('BL-005', 'Canal do Una · Entrada', 'Marco', 'BL-TR-03', 'aguas arriba', -1.4370, -48.4690, 'activo', 73, 90, 3.3, 1.05, 16),
+  sensor('BL-006', 'Canal do Una · Saída', 'Marco', 'BL-TR-03', 'aguas abajo', -1.4490, -48.4830, 'activo', 59, 90, 1.8, .55, 16),
+  sensor('BL-007', 'Microdrenagem Jurunas', 'Cidade Velha', 'BL-TR-04', 'aguas arriba', -1.4750, -48.4880, 'mantenimiento', 34, 75, 0),
+  sensor('BL-008', 'Descarga Guamá', 'Terra Firme', 'BL-TR-05', 'aguas abajo', -1.4840, -48.4620, 'desconectado', 0, 90, 0),
+];
+
+export const BELEM_SEGMENTS: DrainageSegment[] = [
+  { id:'BL-TR-01', name:'Canal da Estrada Nova', sector:'Cidade Velha', capacity:1.15, sensorIds:['BL-001','BL-002'], coordinates:[[-1.4670,-48.5000],[-1.4750,-48.5070]], condition:'posible_obstruccion', confidence:91, evidence:'La entrada aumenta con mayor rapidez que la salida durante la precipitación.', suggestedAction:'Inspeccionar rejillas, residuos y sección hidráulica del canal.' },
+  { id:'BL-TR-02', name:'Canal do Tucunduba', sector:'Terra Firme', capacity:1.05, sensorIds:['BL-003','BL-004'], coordinates:[[-1.4610,-48.4560],[-1.4720,-48.4690]], condition:'sobrecarga', confidence:88, evidence:'Ocupación elevada en ambos puntos y tendencia ascendente sostenida.', suggestedAction:'Activar seguimiento continuo y preparar almacenamiento temporal.' },
+  { id:'BL-TR-03', name:'Canal do Una', sector:'Marco', capacity:1.2, sensorIds:['BL-005','BL-006'], coordinates:[[-1.4370,-48.4690],[-1.4490,-48.4830]], condition:'sobrecarga', confidence:82, evidence:'El nivel de entrada supera el 80 % de la capacidad de referencia.', suggestedAction:'Priorizar retención distribuida antes del ingreso al canal.' },
+  { id:'BL-TR-04', name:'Microdrenagem Jurunas', sector:'Cidade Velha', capacity:.76, sensorIds:['BL-007'], coordinates:[[-1.4750,-48.4880],[-1.4810,-48.4920]], condition:'no_concluyente', confidence:34, evidence:'El punto de control está en mantenimiento.', suggestedAction:'Restablecer la lectura y realizar inspección en terreno.' },
+  { id:'BL-TR-05', name:'Descarga Guamá', sector:'Terra Firme', capacity:1.3, sensorIds:['BL-008'], coordinates:[[-1.4840,-48.4620],[-1.4910,-48.4660]], condition:'no_concluyente', confidence:26, evidence:'No se dispone de telemetría reciente en la descarga.', suggestedAction:'Recuperar comunicaciones y validar el nivel de descarga.' },
+];
+
+export const BELEM_ZONES: RiskZone[] = [
+  { id:'Z-01', name:'Sector Cidade Velha', risk:'alto', runoff:91, polygon:[[-1.456,-48.512],[-1.455,-48.492],[-1.480,-48.486],[-1.485,-48.507]] },
+  { id:'Z-02', name:'Sector Terra Firme', risk:'alto', runoff:88, polygon:[[-1.450,-48.469],[-1.447,-48.449],[-1.475,-48.446],[-1.480,-48.468]] },
+  { id:'Z-03', name:'Sector Marco', risk:'medio', runoff:72, polygon:[[-1.425,-48.483],[-1.423,-48.462],[-1.450,-48.458],[-1.454,-48.480]] },
+];
+
+export const BELEM_RESERVOIRS: Reservoir[] = [
+  { id:'BL-RP-01', name:'Reservatório Estrada Nova', lat:-1.4700, lng:-48.4970, fill:71, capacity:4200 },
+  { id:'BL-RP-02', name:'Reservatório Tucunduba', lat:-1.4635, lng:-48.4590, fill:63, capacity:5100 },
+];
+
+export const BELEM_ALERTS: HydroAlert[] = [
+  { id:'BL-AL-301', type:'Posible obstrucción', severity:'critica', location:'Canal da Estrada Nova', relatedId:'BL-TR-01', timestamp:new Date(now-12*60_000).toISOString(), status:'nueva', action:'Inspeccionar la entrada y liberar la sección de paso.' },
+  { id:'BL-AL-300', type:'Canal con capacidad elevada', severity:'alta', location:'Canal do Tucunduba', relatedId:'BL-TR-02', timestamp:new Date(now-22*60_000).toISOString(), status:'confirmada', action:'Mantener monitoreo continuo y preparar respuesta territorial.', assignee:'Equipe hidráulica' },
+  { id:'BL-AL-299', type:'Sensor desconectado', severity:'media', location:'Descarga Guamá', relatedId:'BL-008', timestamp:new Date(now-49*60_000).toISOString(), status:'asignada', action:'Verificar energía y comunicaciones.', assignee:'Equipe Belém' },
+];
+
+export const BELEM_INTERVENTIONS: GreenIntervention[] = [
+  { id:'IV-01', name:'Parque de chuva Estrada Nova', type:'Parque de absorción', zone:'Sector Cidade Velha', score:93, cost:42000000, area:850, runoffReduction:28, feasibility:88, lat:-1.4690, lng:-48.4960, saved:true },
+  { id:'IV-02', name:'Corredor filtrante Tucunduba', type:'Biozanja vegetada', zone:'Sector Terra Firme', score:90, cost:37600000, area:980, runoffReduction:27, feasibility:85, lat:-1.4630, lng:-48.4600, saved:false },
+  { id:'IV-03', name:'Jardim de retenção Una', type:'Área de biorretención', zone:'Sector Marco', score:84, cost:33500000, area:760, runoffReduction:23, feasibility:80, lat:-1.4400, lng:-48.4710, saved:false },
+];
+
+export const BELEM_SCENARIOS: ScenarioResult[] = [
+  { id:'A', name:'Infraestructura actual', description:'Comportamiento esperado sin nuevas intervenciones.', peakFlow:3.72, runoff:5680, overflow:960, timeToPeak:29, cost:0, area:0, color:'#ff7a59' },
+  { id:'B', name:'Parque Estrada Nova', description:'Captación e infiltración en Cidade Velha.', peakFlow:2.81, runoff:4090, overflow:570, timeToPeak:40, cost:42000000, area:850, color:'#27d3b2' },
+  { id:'C', name:'Corredor Tucunduba', description:'Retención lineal y conducción controlada.', peakFlow:2.76, runoff:4140, overflow:545, timeToPeak:42, cost:37600000, area:980, color:'#48a7ff' },
+  { id:'D', name:'Red integral Belém', description:'Aplicación coordinada de las tres intervenciones.', peakFlow:1.98, runoff:2860, overflow:215, timeToPeak:54, cost:113100000, area:2590, color:'#a78bfa' },
+];
+
+export const BELEM_REPORTS: CommunityReport[] = [
+  { id:'BL-RC-03', category:'Acumulación de agua', location:'Cidade Velha, Belém', description:'Agua acumulada junto a un acceso de microdrenaje.', reporter:'Equipo territorial', status:'inspeccion', createdAt:new Date(now-68*60_000).toISOString(), assignee:'Equipe Belém' },
+  { id:'BL-RC-02', category:'Canal con residuos', location:'Canal da Estrada Nova, Belém', description:'Material visible en la entrada del canal.', reporter:'Inspección municipal', status:'validado', createdAt:new Date(now-145*60_000).toISOString() },
 ];
