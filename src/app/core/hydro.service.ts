@@ -6,16 +6,16 @@ export type DemoArea = 'arica' | 'quibdo' | 'talcahuano' | 'belem';
 
 @Injectable({ providedIn: 'root' })
 export class HydroService {
-  readonly demoArea = signal<DemoArea>('arica');
-  readonly sensors = signal(structuredClone(DEMO_SENSORS));
-  readonly segments = signal(structuredClone(DEMO_SEGMENTS));
-  readonly zones = signal(structuredClone(DEMO_ZONES));
-  readonly reservoirs = signal(structuredClone(DEMO_RESERVOIRS));
-  readonly alerts = signal(structuredClone(DEMO_ALERTS));
-  readonly interventions = signal(structuredClone(DEMO_INTERVENTIONS));
-  readonly scenarios = signal(structuredClone(DEMO_SCENARIOS));
-  readonly reports = signal(structuredClone(DEMO_REPORTS));
-  readonly selectedSensorId = signal('HG-003');
+  readonly demoArea = signal<DemoArea>('belem');
+  readonly sensors = signal(structuredClone(BELEM_SENSORS));
+  readonly segments = signal(structuredClone(BELEM_SEGMENTS));
+  readonly zones = signal(structuredClone(BELEM_ZONES));
+  readonly reservoirs = signal(structuredClone(BELEM_RESERVOIRS));
+  readonly alerts = signal(structuredClone(BELEM_ALERTS));
+  readonly interventions = signal(structuredClone(BELEM_INTERVENTIONS));
+  readonly scenarios = signal(structuredClone(BELEM_SCENARIOS));
+  readonly reports = signal(structuredClone(BELEM_REPORTS));
+  readonly selectedSensorId = signal('BL-001');
   readonly simulationMode = signal<SimulationMode>('normal');
   readonly simulationRunning = signal(false);
   readonly lastUpdated = signal(new Date());

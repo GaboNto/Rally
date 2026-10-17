@@ -114,7 +114,7 @@ export class HydroMapComponent implements AfterViewInit, OnChanges, OnDestroy {
         .on('click', () => this.zoneSelected.emit(zone.id))
         .addTo(riskLayer);
       if (this.decisionMode) {
-        const center = zoneShape.getBounds().getCenter();
+        const center = this.projectionPoint(zone, zoneShape.getBounds().getCenter());
         const parkReduction = this.comparisonMode === 'after'
           ? this.interventions.filter(item => item.zone === zone.name && this.selectedInterventionIds.includes(item.id)).reduce((sum, item) => sum + item.runoffReduction, 0)
           : 0;
@@ -141,9 +141,9 @@ export class HydroMapComponent implements AfterViewInit, OnChanges, OnDestroy {
           [[-36.721,-73.087],[-36.731,-73.101],[-36.740,-73.114],[-36.743,-73.123]],
           [[-36.746,-73.083],[-36.754,-73.096],[-36.762,-73.107]],
         ] : this.demoArea === 'belem' ? [
-          [[-1.418,-48.442],[-1.431,-48.454],[-1.451,-48.468],[-1.466,-48.489]],
-          [[-1.425,-48.448],[-1.447,-48.458],[-1.460,-48.466],[-1.468,-48.488]],
-          [[-1.420,-48.475],[-1.438,-48.479],[-1.463,-48.500]],
+          [[-1.424,-48.451],[-1.430,-48.456],[-1.436,-48.463]],
+          [[-1.447,-48.439],[-1.453,-48.445],[-1.459,-48.451]],
+          [[-1.449,-48.488],[-1.456,-48.495],[-1.464,-48.500]],
         ] : [
           [[5.704,-76.635],[5.700,-76.650],[5.691,-76.659],[5.681,-76.668]],
           [[5.686,-76.641],[5.682,-76.653],[5.674,-76.669]],
@@ -153,8 +153,8 @@ export class HydroMapComponent implements AfterViewInit, OnChanges, OnDestroy {
         const arrow = L.divIcon({ className: 'decision-risk-label', html: '<div class="flow-arrow">←</div>', iconSize: [24, 24], iconAnchor: [12, 12] });
         L.marker(path[Math.max(1, path.length - 2)], { icon: arrow, interactive: false }).addTo(decisionLayer);
       });
-      const highPoint: [number, number] = this.demoArea === 'arica' ? [-18.447, -70.255] : this.demoArea === 'talcahuano' ? [-36.704, -73.084] : this.demoArea === 'belem' ? [-1.418, -48.442] : [5.704, -76.638];
-      const lowPoint: [number, number] = this.demoArea === 'arica' ? [-18.480, -70.318] : this.demoArea === 'talcahuano' ? [-36.743, -73.124] : this.demoArea === 'belem' ? [-1.469, -48.501] : [5.674, -76.681];
+      const highPoint: [number, number] = this.demoArea === 'arica' ? [-18.447, -70.255] : this.demoArea === 'talcahuano' ? [-36.704, -73.084] : this.demoArea === 'belem' ? [-1.424, -48.451] : [5.704, -76.638];
+      const lowPoint: [number, number] = this.demoArea === 'arica' ? [-18.480, -70.318] : this.demoArea === 'talcahuano' ? [-36.743, -73.124] : this.demoArea === 'belem' ? [-1.464, -48.500] : [5.674, -76.681];
       const rainIcon = L.divIcon({ className: 'decision-risk-label', html: `<div class="rain-source"><span>☔</span><div><small>PRONÓSTICO</small><b>${this.rainfall} mm de lluvia</b><em>El agua baja por la pendiente</em></div></div>`, iconSize: [1, 1] });
       const lowIcon = L.divIcon({ className: 'decision-risk-label', html: '<div class="terrain-callout"><small>ZONA BAJA</small><b>El agua converge y se acumula</b></div>', iconSize: [1, 1] });
       L.marker(highPoint, { icon: rainIcon, interactive: false }).addTo(decisionLayer);
@@ -268,7 +268,7 @@ export class HydroMapComponent implements AfterViewInit, OnChanges, OnDestroy {
   private topographicBounds(): L.LatLngBounds {
     if (this.demoArea === 'arica') return L.latLngBounds([[-18.565, -70.420], [-18.405, -70.210]]);
     if (this.demoArea === 'talcahuano') return L.latLngBounds([[-36.79, -73.18], [-36.68, -73.05]]);
-    if (this.demoArea === 'belem') return L.latLngBounds([[-1.49, -48.525], [-1.415, -48.435]]);
+    if (this.demoArea === 'belem') return L.latLngBounds([[-1.477, -48.509], [-1.417, -48.438]]);
     return L.latLngBounds([[5.645, -76.715], [5.725, -76.615]]);
   }
 
@@ -281,6 +281,16 @@ export class HydroMapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private areaName() {
     return this.demoArea === 'talcahuano' ? 'Talcahuano' : this.demoArea === 'belem' ? 'Belém' : this.demoArea === 'quibdo' ? 'Quibdó' : 'Arica';
+  }
+
+  private projectionPoint(zone: RiskZone, fallback: L.LatLng): L.LatLng {
+    if (this.demoArea !== 'belem') return fallback;
+    const points: Record<string, [number, number]> = {
+      'Z-01': [-1.4640, -48.5000],
+      'Z-02': [-1.4590, -48.4510],
+      'Z-03': [-1.4360, -48.4630],
+    };
+    return L.latLng(points[zone.id] ?? [fallback.lat, fallback.lng]);
   }
 
   private projectedDepth(zone: RiskZone, parkReduction: number) {

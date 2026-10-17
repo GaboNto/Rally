@@ -142,17 +142,18 @@ export const BELEM_SENSORS: Sensor[] = [
 ];
 
 export const BELEM_SEGMENTS: DrainageSegment[] = [
-  { id:'BL-TR-01', name:'Canal da Estrada Nova', sector:'Cidade Velha', capacity:1.15, sensorIds:['BL-001','BL-002'], coordinates:[[-1.4670,-48.5000],[-1.4690,-48.5030]], condition:'posible_obstruccion', confidence:91, evidence:'La entrada aumenta con mayor rapidez que la salida durante la precipitación.', suggestedAction:'Inspeccionar rejillas, residuos y sección hidráulica del canal.' },
-  { id:'BL-TR-02', name:'Canal do Tucunduba', sector:'Terra Firme', capacity:1.05, sensorIds:['BL-003','BL-004'], coordinates:[[-1.4610,-48.4560],[-1.4660,-48.4640]], condition:'sobrecarga', confidence:88, evidence:'Ocupación elevada en ambos puntos y tendencia ascendente sostenida.', suggestedAction:'Activar seguimiento continuo y preparar almacenamiento temporal.' },
-  { id:'BL-TR-03', name:'Canal do Una', sector:'Marco', capacity:1.2, sensorIds:['BL-005','BL-006'], coordinates:[[-1.4370,-48.4690],[-1.4490,-48.4830]], condition:'sobrecarga', confidence:82, evidence:'El nivel de entrada supera el 80 % de la capacidad de referencia.', suggestedAction:'Priorizar retención distribuida antes del ingreso al canal.' },
-  { id:'BL-TR-04', name:'Microdrenagem Jurunas', sector:'Cidade Velha', capacity:.76, sensorIds:['BL-007'], coordinates:[[-1.4660,-48.4890],[-1.4690,-48.4930]], condition:'no_concluyente', confidence:34, evidence:'El punto de control está en mantenimiento.', suggestedAction:'Restablecer la lectura y realizar inspección en terreno.' },
-  { id:'BL-TR-05', name:'Descarga Guamá', sector:'Terra Firme', capacity:1.3, sensorIds:[], coordinates:[[-1.4710,-48.4620],[-1.4730,-48.4660]], condition:'no_concluyente', confidence:26, evidence:'No se dispone de una validación hidráulica reciente.', suggestedAction:'Inspeccionar y validar el nivel de descarga.' },
+  { id:'BL-TR-01', name:'Canal da Estrada Nova', sector:'Cidade Velha', capacity:1.15, sensorIds:['BL-001','BL-002'], coordinates:[[-1.4580,-48.4980],[-1.4615,-48.5000],[-1.4660,-48.5015]], condition:'posible_obstruccion', confidence:91, evidence:'La entrada aumenta con mayor rapidez que la salida durante la precipitación.', suggestedAction:'Inspeccionar residuos y sección hidráulica del canal.' },
+  { id:'BL-TR-02', name:'Canal do Tucunduba', sector:'Terra Firme', capacity:1.05, sensorIds:['BL-003','BL-004'], coordinates:[[-1.4470,-48.4530],[-1.4535,-48.4515],[-1.4620,-48.4490]], condition:'sobrecarga', confidence:88, evidence:'Ocupación elevada en el corredor y tendencia ascendente sostenida.', suggestedAction:'Activar seguimiento continuo y preparar almacenamiento temporal.' },
+  { id:'BL-TR-03', name:'Canal do Una', sector:'Marco', capacity:1.2, sensorIds:['BL-005','BL-006'], coordinates:[[-1.4260,-48.4680],[-1.4350,-48.4650],[-1.4430,-48.4620]], condition:'sobrecarga', confidence:82, evidence:'La capacidad estimada del corredor supera el 80 % de la referencia.', suggestedAction:'Priorizar retención distribuida antes del ingreso al canal.' },
+  { id:'BL-TR-04', name:'Microdrenagem Jurunas', sector:'Cidade Velha', capacity:.76, sensorIds:['BL-007'], coordinates:[[-1.4590,-48.4920],[-1.4630,-48.4950],[-1.4660,-48.4980]], condition:'no_concluyente', confidence:34, evidence:'El punto de control requiere validación en terreno.', suggestedAction:'Realizar inspección en terreno y validar la capacidad.' },
+  { id:'BL-TR-05', name:'Descarga Guamá', sector:'Terra Firme', capacity:1.3, sensorIds:[], coordinates:[[-1.4620,-48.4490],[-1.4670,-48.4470],[-1.4700,-48.4450]], condition:'no_concluyente', confidence:26, evidence:'No se dispone de una validación hidráulica reciente.', suggestedAction:'Inspeccionar y validar el nivel de descarga.' },
 ];
 
 export const BELEM_ZONES: RiskZone[] = [
-  { id:'Z-01', name:'Sector Cidade Velha', risk:'alto', runoff:91, polygon:[[-1.455,-48.510],[-1.454,-48.496],[-1.468,-48.493],[-1.471,-48.507]] },
-  { id:'Z-02', name:'Sector Terra Firme', risk:'alto', runoff:88, polygon:[[-1.450,-48.469],[-1.448,-48.452],[-1.466,-48.450],[-1.469,-48.467]] },
-  { id:'Z-03', name:'Sector Marco', risk:'medio', runoff:72, polygon:[[-1.427,-48.482],[-1.426,-48.466],[-1.445,-48.463],[-1.447,-48.479]] },
+  // Envolventes urbanas contenidas dentro de tierra para la demostración cartográfica.
+  { id:'Z-01', name:'Sector Cidade Velha', risk:'alto', runoff:91, polygon:[[-1.4548,-48.5038],[-1.4545,-48.4972],[-1.4645,-48.4960],[-1.4680,-48.5015],[-1.4630,-48.5042]] },
+  { id:'Z-02', name:'Sector Terra Firme', risk:'alto', runoff:88, polygon:[[-1.4510,-48.4580],[-1.4485,-48.4480],[-1.4625,-48.4435],[-1.4680,-48.4525],[-1.4620,-48.4590]] },
+  { id:'Z-03', name:'Sector Marco', risk:'medio', runoff:72, polygon:[[-1.4240,-48.4695],[-1.4235,-48.4590],[-1.4405,-48.4545],[-1.4460,-48.4635],[-1.4380,-48.4705]] },
 ];
 
 export const BELEM_RESERVOIRS: Reservoir[] = [
@@ -167,9 +168,9 @@ export const BELEM_ALERTS: HydroAlert[] = [
 ];
 
 export const BELEM_INTERVENTIONS: GreenIntervention[] = [
-  { id:'IV-01', name:'Parque de chuva Estrada Nova', type:'Parque de absorción', zone:'Sector Cidade Velha', score:93, cost:42000000, area:850, runoffReduction:28, feasibility:88, lat:-1.4630, lng:-48.5000, saved:true },
-  { id:'IV-02', name:'Corredor filtrante Tucunduba', type:'Biozanja vegetada', zone:'Sector Terra Firme', score:90, cost:37600000, area:980, runoffReduction:27, feasibility:85, lat:-1.4630, lng:-48.4600, saved:false },
-  { id:'IV-03', name:'Jardim de retenção Una', type:'Área de biorretención', zone:'Sector Marco', score:84, cost:33500000, area:760, runoffReduction:23, feasibility:80, lat:-1.4400, lng:-48.4710, saved:false },
+  { id:'IV-01', name:'Parque de chuva Estrada Nova', type:'Parque de absorción', zone:'Sector Cidade Velha', score:93, cost:42000000, area:850, runoffReduction:28, feasibility:88, lat:-1.4632, lng:-48.4993, saved:true },
+  { id:'IV-02', name:'Corredor filtrante Tucunduba', type:'Biozanja vegetada', zone:'Sector Terra Firme', score:90, cost:37600000, area:980, runoffReduction:27, feasibility:85, lat:-1.4585, lng:-48.4510, saved:false },
+  { id:'IV-03', name:'Jardim de retenção Una', type:'Área de biorretención', zone:'Sector Marco', score:84, cost:33500000, area:760, runoffReduction:23, feasibility:80, lat:-1.4360, lng:-48.4630, saved:false },
 ];
 
 export const BELEM_SCENARIOS: ScenarioResult[] = [
