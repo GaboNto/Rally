@@ -1,57 +1,64 @@
-# Pomerape
+# RED BIOESPONJA AMAZÓNICA
 
-Prototipo funcional de una plataforma inteligente de monitoreo y apoyo a la planificación del drenaje pluvial. Fue construido con Angular 19, Leaflet, OpenStreetMap y Apache ECharts.
+### Tecnología e infraestructura verde para enfrentar inundaciones urbanas
 
-> Todos los sensores, riesgos, diagnósticos, ubicaciones temáticas y resultados hidráulicos son datos ficticios de demostración. La aplicación no representa condiciones reales de Arica ni reemplaza estudios de ingeniería.
+**RED BIOESPONJA AMAZÓNICA** es la solución desarrollada por el equipo **Pomerape** durante el **Rally Latinoamericano de Innovación 2026**. Aborda las inundaciones urbanas que afectan a comunidades de **Belém do Pará, Brasil**, mediante jardines de biorretención, monitoreo inteligente, análisis territorial y herramientas digitales de apoyo a la decisión.
 
-## Funcionalidades
+> 🏆 **1.er lugar en la categoría Impacto Social de la sede de la Universidad de Tarapacá.** Proyecto desarrollado en 28 horas por un equipo multidisciplinario.
 
-- Centro de control con indicadores, mapa, telemetría y simulador IoT.
-- Mapa geoespacial con una capa de calor transparente verde–amarillo–rojo, sin bordes rectangulares, además de drenaje, reservorios, sensores y propuestas verdes.
-- Modo de concurso que simula una conexión a una API de modelo digital de elevación (DEM), con cotas térmicas, curvas de nivel y susceptibilidad derivada.
-- Adaptador para conectar capas reales WMS, XYZ o GeoJSON sin modificar los componentes del mapa.
-- Red de 12 sensores y generación periódica de lecturas coherentes.
-- Diagnóstico preliminar de funcionamiento normal, posible obstrucción, sobrecarga o evidencia no concluyente.
-- Priorización multicriterio de infraestructura verde.
-- Comparación de cuatro escenarios hidráulicos demostrativos.
-- Gestión completa de alertas: confirmar, asignar y cerrar.
-- Flujo de reportes ciudadanos y vista de administración municipal.
-- Exportación de datos CSV e impresión/guardado como PDF.
+## El desafío
 
-## Requisitos
+Las lluvias intensas, la capacidad del drenaje urbano y las condiciones de marea pueden combinarse y provocar acumulación de agua en sectores vulnerables de Belém. La solución reúne información del territorio y del sistema de drenaje para identificar puntos críticos, evaluar intervenciones y apoyar una respuesta oportuna.
 
-- Node.js 20 o 22 LTS recomendado.
-- npm 10 o superior.
+## La solución
 
-## Instalación y ejecución
+| Componente | Función |
+| --- | --- |
+| **Infraestructura verde** | Jardines de biorretención que captan, almacenan, filtran y regulan la escorrentía. |
+| **Sensores IoT** | Seguimiento de niveles de agua, precipitaciones y condiciones de drenaje para identificar saturación u obstrucciones. |
+| **Análisis satelital** | Radar **Sentinel‑1** para apoyar la identificación de zonas vulnerables a inundaciones. |
+| **Plataforma digital** | Visualización de mapas, indicadores, sensores, alertas e intervenciones. |
+| **Simulación** | Evaluación de escenarios de lluvia y marea y del comportamiento de las bioesponjas. |
+
+## Plataforma Pomerape
+
+La aplicación web permite recorrer el problema desde el análisis territorial hasta la evaluación de una solución:
+
+1. **Centro de control:** resume lluvia, zonas evaluadas, corredores e incidencias.
+2. **Mapa de decisión:** muestra topografía, drenaje, zonas prioritarias y ubicaciones de bioesponjas; compara la situación actual con el escenario intervenido.
+3. **Red de monitoreo:** presenta lecturas de sensores y diagnósticos de los tramos de drenaje.
+4. **Infraestructura verde:** permite configurar módulos y evaluar su capacidad de captación.
+5. **Modelo de bioesponja:** simula entrada, almacenamiento, infiltración, descarga y rebalse bajo distintas condiciones de lluvia y marea.
+6. **Alertas e informes:** facilita el seguimiento de incidencias y la comunicación de resultados.
+
+La experiencia inicia en **Belém** y también incluye áreas de exploración para **Arica, Talcahuano y Quibdó**.
+
+## Tecnologías
+
+**Angular 19 · TypeScript · SCSS · Leaflet · OpenStreetMap · Apache ECharts**
+
+## Ejecutar el proyecto
+
+**Requisitos:** Node.js 20 o 22 y npm 10 o superior.
 
 ```bash
 npm install
 npm start
 ```
 
-La aplicación queda disponible en `http://localhost:4200`.
-
-## Validación
+Abre **http://localhost:4200**. Para generar la versión de producción:
 
 ```bash
 npm run build
-npm test -- --watch=false --browsers=ChromeHeadless
 ```
 
-El build de producción se genera en `dist/rally/browser`.
+## Documentación
 
-## Arquitectura
+- [Descripción del proyecto y su funcionamiento](docs/PROYECTO.md)
+- [Arquitectura y guía de uso](docs/ARQUITECTURA.md)
 
-- `src/app/core`: modelos tipados, datos demostrativos y estado compartido.
-- `src/app/shared`: mapa Leaflet y adaptador reutilizable de ECharts.
-- `src/app/pages`: módulos funcionales cargados mediante rutas lazy.
-- `src/app/app.routes.ts`: navegación principal.
+## Equipo y reconocimiento
 
-Los servicios se diseñaron para poder reemplazar el estado local por APIs REST, WebSocket/MQTT y un adaptador futuro para EPA SWMM sin mezclar esa lógica con los componentes visuales.
+**Pomerape** representó a la **Universidad de Tarapacá** en el Rally Latinoamericano de Innovación 2026. El proyecto obtuvo el **primer lugar de Impacto Social en su sede**, fruto de 28 horas de colaboración entre distintas especialidades.
 
-## Conectar una capa geoespacial
-
-En **Mapa geoespacial → Fuente externa**, selecciona el formato e ingresa la URL pública del servicio. Para WMS también se requiere el identificador exacto de la capa. El servidor de origen debe permitir solicitudes CORS desde la aplicación.
-
-Los GeoJSON pueden usar una propiedad `risk` o `riesgo` con valores `alto`, `medio` o `bajo`; Pomerape aplica automáticamente la escala roja, amarilla y verde.
+Este repositorio reúne el trabajo tecnológico de la solución y muestra cómo la ingeniería, los datos y la infraestructura verde pueden combinarse para abordar un problema ambiental con impacto social.
